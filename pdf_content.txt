@@ -1,0 +1,82 @@
+Nguyễn Bùi Gia Huy
+Software Engineer
+0395370705 ✉nguyenbuigiahuy2507@gmail.com Bình Thạnh, TP.Hồ Chí Minh
+RESUME SUMMARY
+Third-year Software Engineering student with hands-on backend development experience through remote and onboard. Developed
+production-ready modules for e-commerce and supply chain systems using Java Spring Boot and ASP.NET Core, focusing on secure
+architectures, real-time features, and scalable designs. Passionate about deepening expertise in C#, system design patterns, and SOLID
+principles, with a clear plan to secure a Junior Backend Engineer role within the next year, progress toward Mid-level, continue
+improving Japanese proficiency, and contribute meaningfully to large-scale system architecture.
+EDUCATION
+FPT University Oct 2023-2027 (Expected)
+Software Engineering
+GPA: 3.2/4
+Relevant Coursework:  Data Structures & Algorithms · Database Systems · Object-Oriented Design · Software
+Architecture · Computer Networking · Software T esting
+TECHNICAL SKILLS
+Languages Java 17/21 (Core, Stream API), C#(.NET, Window Forms), SQL (Index, Transaction).
+Framework Spring Boot, Spring Security, Spring Data JPA, Hibernate, ASP.NET Core, EF Core.
+Database & Caching SQL Server, MySQL, MongoDB, Redis (Caching, Distributed Locking).
+Communications & Tools RESTful API, rGPC, Git, GitHub, GitLab, Postman, ngrok.
+Architecture & Design MicroServices, Modular Monolith, Clean Architecture, SOLID principles, CQRS, MVC.
+AI Development Experience using AI tools (Claude CLI, Cursor, Antigravity, e.g) in software development, familar
+with modern skills and workflows.
+WORK EXPERIENCE
+FPT Software [Dec 2025]-Present
+Backend Intern | Tech: C# ASP.NET, RESTful API, SQL Server, Redis, Clean Architecture, JWT, 3-Party Services.
+•Feature Development: Designed and implemented secure Authentication & RBAC system using JWT + Google OAuth 2.0,
+delivering strict role-based access control for Admin, Manager, Customer, and Staff.
+•Performance Optimization: Optimized high-traffic authentication flows by migrating Refresh Token and OTP operations to Redis
+In-Memory cache while implementing 2FA via MailKit and BCrypt hashing, significantly reducing database load.
+•Core Architecture: Architected Delivery Engine managing full lifecycle of logistics orders across 7 complex states, supporting
+Online Orders, Returns, and internal supply chain coordination (Supplier-Warehouse-Franchise).
+•Real-time Integration: Built real-time inventory synchronization between Delivery, Stock, and Inventory services using EF Core,
+combined with Haversine geo-routing for accurate ETA and Cloudinary-powered paperless POD with e-signature.
+•API & Documentation: Produced comprehensive Swagger documentation to ensure seamless cross-team collaboration between
+frontend and backend.
+TCH Company [Sep 2025]-[Dec 2025]
+Backend Developer | Tech: Java 17, Spring Boot, MySQL, Restful API, Swgger, Git
+•Feature Development: Developed end-to-end Cost Estimator module that automates final landed cost calculation for imported goods
+and optimizes delivery scheduling using Java Spring Boot and RESTful APIs.
+•Performance Optimization: Engineered high-performance improvements including product API latency reduction from ~203ms to
+~89ms, 40% faster cost estimation processing, and ~30% reduction in database query response time through refined JPA/Hibernate
+queries.
+•API & Documentation: Designed and documented clean RESTful endpoints with Swagger, enabling smooth cross-team
+collaboration and faster integration with frontend and testing teams.
+PROJECT
+Ameri Franchise Coffee [Jan 2026]-[Apr 2026]
+Backend Developer - Team size: 5 | Tech: ASP.NET CORE, SQL Server, EF Core, JWT, Cloudinary, Mailkit, Redis, Google OAuth
+•Authentication & Security Module: Designed and implemented a secure authentication system with JWT, Google OAuth 2.0, and
+Email/Password, integrated RBAC for role-based access control (Admin, Manager, Customer, Staff), and managed sessions using
+Redis for Refresh Token and OTP storage.
+•Logistics & Delivery Module: Built the core Delivery Engine handling full lifecycle of Online Orders, Returns, and Internal
+Transfers across 7 complex states, with real-time cross-service communication between Delivery, Stock, and Inventory using EF
+Core.
+•Location & ETA Algorithm: Implemented Haversine algorithm for accurate geo-distance calculation (Lat/Lng) and ETA forecasting
+to optimize delivery routing.
+•Paperless Logistics Flow: Developed digital POD (Proof of Delivery) system integrated with Cloudinary for image storage and
+electronic signature, enabling fully paperless delivery confirmation.
+•Achieved perfect inventory synchronization by tightly coupling delivery status with automatic stock updates, eliminating data
+discrepancies between physical and system inventory.
+•Optimized Authentication performance by migrating Refresh Token and OTP operations to Redis In-Memory cache, reducing
+database queries by 40% on high-traffic APIs.
+•Successfully digitized the entire logistics process from manual to 100% paperless using Cloudinary and real-time notifications,
+significantly improving operational efficiency and customer experience.
+GitHub: https://github.com/kazutoeyy/Ameri-Cohi-backend.git  || https://github.com/kazutoeyy/Ameri-Cohi-frontend.git
+Second hand EV Battery Trading [Sep 2025]-[Dec 2025]
+Backend Developer - Team size: 3 | Tech: Java 17, Spring Boot 3.x, Hibernate, Spring Security(JWT), SQL Server, VNPay,
+WebSocket(STOMP), DocuSeal API, Cloudinary, RESTful API 
+•Architected entire backend infrastructure from scratch and designed a normalized SQL Server database with 17 tables supporting
+complex order life-cycles and RBAC for 5 distinct actor types.
+•Engineered a secure escrow payment system integrated with VNPay, implementing state-machine flows for automated dispute
+resolution and refunds.
+•Integrated DocuSeal API via webhooks to automate legally-binding electronic contract generation upon checkout.
+•Implemented intelligent price suggestion engine using Google Gemini AI to assist sellers based on vehicle conditions.
+•Built real-time chat and notification system with WebSocket (STOMP) for seamless buyer-seller communication.
+•Designed and secured 100+ RESTful APIs using Spring Security (JWT) and Hibernate, optimized complex product filtering queries
+while mitigating common security vulnerabilities.
+GitHub: https://github.com/kazutoeyy/Second-hand-EV-Battery-Trading-BE.git || https://github.com/kazutoeyy/Second-hand-EV-
+Battery-Trading-FE.git
+LANGUAGES
+English: B1 — Good at reading and listening for technical documentation and team communication.
+Japanese:  JLPT N5 — I'm continuing with my studies and expect to get N3 by December 2026.
