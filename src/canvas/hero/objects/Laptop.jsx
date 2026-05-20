@@ -1,31 +1,29 @@
 /**
  * Laptop.jsx — Gateway object (CORE)
- * Click → triggers transition to Workspace (Phase 6)
+ * Click → triggers transition to Workspace
  * Procedural geometry — no GLB needed
  * Bloom: YES (screen emissive)
  */
 
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { RoundedBox } from '@react-three/drei'
+import { RoundedBox, useTexture } from '@react-three/drei'
 import useFloatingMotion from '@hooks/useFloatingMotion'
 import useHoverInteraction from '@hooks/useHoverInteraction'
-import useFocusState from '@hooks/useFocusState'
 import useSceneStore from '@stores/useSceneStore'
 import useInteractionStore from '@stores/useInteractionStore'
 
-export default function Laptop({ position, config, index }) {
+export default function Laptop({ position = [0, 0, 0] }) {
   const groupRef = useRef()
   const screenRef = useRef()
+  const workspaceTexture = useTexture('/workspace-preview.png')
 
-  useFloatingMotion(groupRef, { index, amplitude: 0.25 })
+  useFloatingMotion(groupRef, { index: 0, amplitude: 0.2 })
 
   const { bind, hovered } = useHoverInteraction('laptop', {
-    scale: 1.15,
+    scale: 1.1,
     groupRef,
   })
-
-  useFocusState('laptop', groupRef)
 
   // Screen glow pulse
   useFrame((state) => {
@@ -41,15 +39,11 @@ export default function Laptop({ position, config, index }) {
     const { isInteractionEnabled } = useInteractionStore.getState()
     if (!isInteractionEnabled) return
 
-    const { startTransition, setScene } = useSceneStore.getState()
+    const { startTransition } = useSceneStore.getState()
     const { disableInteractions } = useInteractionStore.getState()
 
-    // Dispatch transition start — Phase 6 CameraChoreography will handle the rest
     disableInteractions()
     startTransition()
-    
-    // SceneManager will switch to workspace after transition completes
-    // For now: immediate switch with transition flag
     window.dispatchEvent(new CustomEvent('hero-to-workspace'))
   }
 
@@ -57,29 +51,28 @@ export default function Laptop({ position, config, index }) {
     <group
       ref={groupRef}
       position={position}
-      scale={config.scale}
       {...bind}
       onClick={handleClick}
     >
       {/* Base / Body */}
       <RoundedBox args={[2.4, 0.08, 1.6]} radius={0.03} position={[0, -0.5, 0]} rotation={[-0.1, 0, 0]}>
-        <meshStandardMaterial color="#2A2A3E" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#1E1E1E" metalness={0.8} roughness={0.2} />
       </RoundedBox>
 
       {/* Screen panel */}
       <group position={[0, 0.3, -0.6]} rotation={[0.3, 0, 0]}>
         {/* Screen bezel */}
         <RoundedBox args={[2.3, 1.5, 0.05]} radius={0.03}>
-          <meshStandardMaterial color="#1A1A2E" metalness={0.6} roughness={0.3} />
+          <meshStandardMaterial color="#141414" metalness={0.6} roughness={0.3} />
         </RoundedBox>
 
-        {/* Screen (emissive — bloom target) */}
-        <mesh ref={screenRef} position={[0, 0, 0.03]}>
+        {/* Screen — workspace preview texture (portal) */}
+        <mesh ref={screenRef} name="laptop-screen" position={[0, 0, 0.03]}>
           <planeGeometry args={[2.0, 1.2]} />
           <meshStandardMaterial
-            color={hovered ? '#22D3EE' : '#7C5CFC'}
-            emissive={hovered ? '#22D3EE' : '#7C5CFC'}
-            emissiveIntensity={0.3}
+            map={workspaceTexture}
+            //emissive="#ffffff"
+            emissiveIntensity={hovered ? 0.3 : 0.1}
             toneMapped={false}
           />
         </mesh>
@@ -88,7 +81,7 @@ export default function Laptop({ position, config, index }) {
       {/* Hinge */}
       <mesh position={[0, -0.15, -0.72]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.03, 0.03, 2.2, 8]} />
-        <meshStandardMaterial color="#3A3A4E" metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#2A2A2A" metalness={0.9} roughness={0.1} />
       </mesh>
     </group>
   )

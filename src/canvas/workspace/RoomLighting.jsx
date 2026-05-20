@@ -17,8 +17,8 @@ export default function RoomLighting({ lampRef }) {
   const { theme } = useThemeStore()
   const isDark = theme === 'dark'
 
-  const intensityMultiplier = isDark ? 1.0 : 1.3
-  const ambientIntensity = isDark ? LIGHTING.workspace.ambient.intensity : 0.5
+  const intensityMultiplier = isDark ? 1.4 : 1.3
+  const ambientIntensity = isDark ? 0.4 : 0.5
 
   return (
     <group>
@@ -64,7 +64,7 @@ export default function RoomLighting({ lampRef }) {
         decay={2}
       />
 
-      {/* Window Light — cool blue, simulates outside light */}
+      {/* Window Light — warm mode should feel brighter and warmer */}
       <pointLight
         position={[0, 3.5, -3]}
         intensity={isDark ? LIGHTING.workspace.windowLight.intensity : LIGHTING.workspace.windowLight.intensity * 2}

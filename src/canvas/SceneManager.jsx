@@ -9,6 +9,7 @@ import { lazy, Suspense } from 'react'
 import HeroScene from './hero/HeroScene'
 import CameraChoreography from './transitions/CameraChoreography'
 import MagneticCollapse from './transitions/MagneticCollapse'
+import TransitionPortal from './transitions/TransitionPortal'
 
 const WorkspaceScene = lazy(() => import('./workspace/WorkspaceScene'))
 
@@ -20,6 +21,7 @@ export default function SceneManager() {
       {/* Transition orchestrators — always mounted */}
       <CameraChoreography />
       <MagneticCollapse />
+      <TransitionPortal />
 
       {/* Scenes — show hero during transition if transitioning FROM hero */}
       {(currentScene === 'hero' || (isTransitioning && previousScene === 'hero')) && (

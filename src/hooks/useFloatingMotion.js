@@ -25,6 +25,9 @@ export default function useFloatingMotion(ref, { index = 0, amplitude = 0.3, spe
 
   useFrame((state) => {
     if (!enabled || !ref.current) return
+    
+    // Throttle to ~30fps for floating motion
+    if (Math.round(state.clock.elapsedTime * 30) % 2 !== 0) return
 
     const t = state.clock.elapsedTime
 

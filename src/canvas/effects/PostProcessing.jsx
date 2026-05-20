@@ -1,14 +1,15 @@
 /**
  * PostProcessing.jsx — Effect composer pipeline
- * Bloom + Vignette + ChromaticAberration (transition-only)
+ * Bloom + Vignette + ChromaticAberration (subtle) + RadialBlur (transition)
  */
 
-import { useRef } from 'react'
+import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { EffectComposer, Vignette, ChromaticAberration } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import { Vector2 } from 'three'
 import SelectiveBloom from './SelectiveBloom'
+import RadialBlurEffect from './RadialBlurEffect'
 import useQualityStore from '../../stores/useQualityStore'
 import useSceneStore from '../../stores/useSceneStore'
 import { POST_PROCESSING, QUALITY } from '../../utils/constants'
@@ -16,14 +17,17 @@ import { POST_PROCESSING, QUALITY } from '../../utils/constants'
 export default function PostProcessing() {
   const { tier } = useQualityStore()
   const caOffsetRef = useRef(new Vector2(0, 0))
+  const radialBlurRef = useRef(null)
   
   // Disable bloom if quality is low
   const bloomEnabled = QUALITY[tier]?.bloom ?? true
 
   const prefersReducedMotion = typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
 
-  // ChromaticAberration: bell curve intensity during transitions
-  // Peaks at 50% transition progress, zero at rest
+  // Create radial blur effect instance
+  const radialBlurEffect = useMemo(() => new RadialBlurEffect(), [])
+
+  // Drive blur + CA intensity from transition progress
   useFrame(() => {
     if (prefersReducedMotion) return
 
@@ -31,10 +35,19 @@ export default function PostProcessing() {
     
     if (isTransitioning && transitionProgress > 0) {
       // Bell curve: sin(progress * PI) peaks at 0.5
-      const intensity = Math.sin(transitionProgress * Math.PI) * POST_PROCESSING.chromaticAberration.offset[0]
-      caOffsetRef.current.set(intensity, intensity)
+      const bell = Math.sin(transitionProgress * Math.PI)
+
+      // Radial blur: main motion blur effect
+      radialBlurEffect.strength = bell * 0.12
+
+      // CA: subtle accent (reduced from previous)
+      const caIntensity = bell * POST_PROCESSING.chromaticAberration.offset[0] * 0.5
+      caOffsetRef.current.set(caIntensity, caIntensity)
     } else {
       // Lerp back to zero when not transitioning
+      radialBlurEffect.strength *= 0.9
+      if (radialBlurEffect.strength < 0.001) radialBlurEffect.strength = 0
+
       caOffsetRef.current.x *= 0.9
       caOffsetRef.current.y *= 0.9
       if (Math.abs(caOffsetRef.current.x) < 0.00001) {
@@ -48,12 +61,15 @@ export default function PostProcessing() {
       {bloomEnabled && <SelectiveBloom />}
       
       {!prefersReducedMotion && (
-        <ChromaticAberration
-          blendFunction={BlendFunction.NORMAL}
-          offset={caOffsetRef.current}
-          radialModulation={false}
-          modulationOffset={0.15}
-        />
+        <>
+          <primitive object={radialBlurEffect} ref={radialBlurRef} />
+          <ChromaticAberration
+            blendFunction={BlendFunction.NORMAL}
+            offset={caOffsetRef.current}
+            radialModulation={false}
+            modulationOffset={0.15}
+          />
+        </>
       )}
       
       <Vignette 

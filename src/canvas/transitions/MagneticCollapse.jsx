@@ -11,7 +11,7 @@ import { useRef, useEffect, useCallback } from 'react'
 import { useThree } from '@react-three/fiber'
 import gsap from 'gsap'
 import useSceneStore from '@stores/useSceneStore'
-import { TIMING, FLOATING_OBJECTS } from '@utils/constants'
+import { TIMING } from '@utils/constants'
 
 export default function MagneticCollapse() {
   const { scene } = useThree()
@@ -23,22 +23,8 @@ export default function MagneticCollapse() {
    * the scene graph and matching object names/userData
    */
   const getFloatingObjects = useCallback(() => {
-    const objects = []
-    scene.traverse((child) => {
-      if (child.isGroup && child.parent?.isGroup) {
-        // Look for objects that match our floating system pattern
-        // Each FloatingSystem child is a group with position set by orbital system
-        const found = FLOATING_OBJECTS.find(obj => {
-          // Skip laptop — it's the center/attractor
-          if (obj.id === 'laptop') return false
-          return true
-        })
-        if (found) {
-          objects.push(child)
-        }
-      }
-    })
-    return objects
+    // No floating objects in current hero scene (laptop only)
+    return []
   }, [scene])
 
   /**

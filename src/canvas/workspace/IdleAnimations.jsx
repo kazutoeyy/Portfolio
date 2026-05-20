@@ -16,6 +16,8 @@ import { useFrame } from '@react-three/fiber'
  */
 export default function IdleAnimations({ lampArmRef, monitorScreenRef, windowPaneRef }) {
   useFrame((state) => {
+    // Throttle to ~30fps for idle background animations
+    if (Math.round(state.clock.elapsedTime * 30) % 2 !== 0) return
     const t = state.clock.elapsedTime
 
     // Lamp arm sway — subtle pendulum oscillation

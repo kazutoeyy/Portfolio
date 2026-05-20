@@ -18,28 +18,26 @@ export default function AboutSection() {
         ref={ref}
         style={{
           display: 'grid',
-          gridTemplateColumns: '300px 1fr',
+          gridTemplateColumns: '280px 1fr',
           gap: 'var(--gap-xl)',
           alignItems: 'start',
         }}
       >
         {/* ─── Portrait ─────────────────────────────── */}
         <div className="animate-stagger" style={{ position: 'relative' }}>
-          {/* Decorative offset frame */}
           <div
             aria-hidden="true"
             style={{
               position: 'absolute',
-              top: '14px',
-              left: '14px',
-              right: '-14px',
-              bottom: '-14px',
-              borderRadius: '20px',
-              border: '1.5px solid rgba(124, 92, 252, 0.2)',
+              top: '12px',
+              left: '12px',
+              right: '-12px',
+              bottom: '-12px',
+              borderRadius: '12px',
+              border: '1px solid var(--color-border)',
               pointerEvents: 'none',
             }}
           />
-          {/* Photo — overflow: visible so portrait can break out of frame */}
           <div style={{ position: 'relative', overflow: 'visible' }}>
             <img
               src="/ava1.jpg"
@@ -49,15 +47,14 @@ export default function AboutSection() {
                 aspectRatio: '3 / 4',
                 objectFit: 'cover',
                 objectPosition: 'center top',
-                borderRadius: '20px',
+                borderRadius: '12px',
                 display: 'block',
-                marginTop: '-20px',
+                marginTop: '-16px',
                 position: 'relative',
                 zIndex: 1,
-                filter: 'grayscale(15%) contrast(1.05)',
+                filter: 'grayscale(20%) contrast(1.05)',
               }}
             />
-            {/* Bottom gradient fade */}
             <div
               aria-hidden="true"
               style={{
@@ -67,7 +64,7 @@ export default function AboutSection() {
                 right: 0,
                 height: '35%',
                 background: 'linear-gradient(to top, var(--color-bg), transparent)',
-                borderRadius: '0 0 20px 20px',
+                borderRadius: '0 0 12px 12px',
                 pointerEvents: 'none',
                 zIndex: 2,
               }}
@@ -85,7 +82,7 @@ export default function AboutSection() {
                 fontSize: 'var(--font-size-small)',
                 color: 'var(--color-primary)',
                 fontWeight: 500,
-                letterSpacing: '0.08em',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 marginBottom: '0.75rem',
               }}
@@ -96,7 +93,7 @@ export default function AboutSection() {
               style={{
                 fontFamily: 'var(--font-heading)',
                 fontSize: 'var(--font-size-h1)',
-                fontWeight: 600,
+                fontWeight: 700,
                 color: 'var(--color-text)',
                 lineHeight: 'var(--line-height-heading)',
                 letterSpacing: 'var(--letter-spacing-heading)',
@@ -137,6 +134,84 @@ export default function AboutSection() {
             production-ready backend systems focused on secure architectures, real-time
             features, and scalable designs for e-commerce and supply chain domains.
           </p>
+
+          {/* Stats */}
+          <div
+            className="animate-stagger"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 'var(--gap-md)',
+              maxWidth: '360px',
+            }}
+          >
+            <div
+              style={{
+                padding: '1.5rem',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-lg)',
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  color: 'var(--color-primary)',
+                  lineHeight: 1,
+                  margin: 0,
+                }}
+              >
+                0.5+
+              </p>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 'var(--font-size-small)',
+                  color: 'var(--color-text-muted)',
+                  marginTop: '0.5rem',
+                  lineHeight: 1.3,
+                }}
+              >
+                Year
+                <br />
+                Experience
+              </p>
+            </div>
+            <div
+              style={{
+                padding: '1.5rem',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-lg)',
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  color: 'var(--color-primary)',
+                  lineHeight: 1,
+                  margin: 0,
+                }}
+              >
+                3+
+              </p>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 'var(--font-size-small)',
+                  color: 'var(--color-text-muted)',
+                  marginTop: '0.5rem',
+                  lineHeight: 1.3,
+                }}
+              >
+                Technical
+                <br />
+                Projects
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

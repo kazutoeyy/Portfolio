@@ -14,9 +14,10 @@ export default function SkillsSection() {
         padding: 'var(--section-padding) var(--content-padding)',
         maxWidth: 'var(--content-max-width)',
         margin: '0 auto',
+        borderTop: '1px solid var(--color-border)',
       }}
     >
-      <SectionHeading title="Technical Arsenal." subtitle="Core Competencies & Technologies" />
+      <SectionHeading title="Technical Arsenal." subtitle="Core Competencies" />
 
       <div
         ref={ref}
@@ -32,11 +33,16 @@ export default function SkillsSection() {
             key={idx}
             className="animate-stagger"
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: '20px',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-lg)',
               padding: 'var(--gap-lg)',
-              backdropFilter: 'blur(10px)',
+              transition: 'border-color var(--transition-normal)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--color-border)';
             }}
           >
             <h3
@@ -54,17 +60,16 @@ export default function SkillsSection() {
                 aria-hidden="true"
                 style={{
                   display: 'inline-block',
-                  width: '8px',
-                  height: '8px',
+                  width: '6px',
+                  height: '6px',
                   borderRadius: '50%',
-                  background: skillGroup.color,
-                  boxShadow: `0 0 10px ${skillGroup.color}`,
+                  background: 'var(--color-primary)',
                 }}
               />
               {skillGroup.category}
             </h3>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               {skillGroup.items.map((item, i) => (
                 <span
                   key={i}
@@ -72,10 +77,9 @@ export default function SkillsSection() {
                     fontFamily: 'var(--font-body)',
                     fontSize: 'var(--font-size-small)',
                     color: 'var(--color-text-muted)',
-                    background: 'rgba(0, 0, 0, 0.2)',
-                    padding: '0.4rem 0.8rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid rgba(255,255,255,0.03)',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid var(--color-border)',
                   }}
                 >
                   {item}

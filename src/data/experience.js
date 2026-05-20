@@ -3,7 +3,7 @@ export const experience = [
     id: 'fpt-software',
     company: 'FPT Software',
     role: 'Backend Intern',
-    duration: 'Dec 2025 - Present',
+    duration: 'Dec 2025 - Apr 2026',
     tech: ['C# ASP.NET', 'SQL Server', 'Redis', 'Clean Architecture', 'JWT'],
     description: 'Developed production-ready modules for e-commerce and supply chain systems.',
     bullets: [

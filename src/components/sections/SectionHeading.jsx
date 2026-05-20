@@ -3,31 +3,34 @@ import useScrollAnimation from '@hooks/useScrollAnimation';
 
 export default function SectionHeading({ title, subtitle }) {
   const ref = useRef(null);
-  useScrollAnimation(ref, { yOffset: 30, duration: 0.8 });
+  useScrollAnimation(ref, { yOffset: 20, duration: 0.8 });
 
   return (
-    <div ref={ref} className="section-heading" style={{ marginBottom: 'var(--spacing-2xl)', textAlign: 'center' }}>
-      <h2 style={{ 
-        fontFamily: "'Clash Display', sans-serif", 
-        fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-        fontWeight: 600,
-        color: 'var(--color-text)',
-        margin: '0 0 0.5rem 0',
-        letterSpacing: '-0.02em'
-      }}>
-        {title}
-      </h2>
+    <div ref={ref} style={{ marginBottom: 'var(--gap-xl)' }}>
       {subtitle && (
-        <p style={{ 
-          fontFamily: "'Satoshi', sans-serif",
+        <p style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: 'var(--font-size-small)',
           color: 'var(--color-primary)',
-          fontSize: '1.1rem',
-          margin: 0,
-          fontWeight: 500
+          fontWeight: 500,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          marginBottom: '0.75rem',
         }}>
           {subtitle}
         </p>
       )}
+      <h2 style={{
+        fontFamily: 'var(--font-heading)',
+        fontSize: 'var(--font-size-h1)',
+        fontWeight: 700,
+        color: 'var(--color-text)',
+        margin: 0,
+        letterSpacing: 'var(--letter-spacing-heading)',
+        lineHeight: 'var(--line-height-heading)',
+      }}>
+        {title}
+      </h2>
     </div>
   );
 }

@@ -2,7 +2,7 @@
  * useSceneStore — Scene state management
  * Controls which scene is active and transition state
  * 
- * Flow: loading → hero → workspace → scroll
+ * Flow: hero → workspace → scroll
  * Transitions are one-directional except workspace ↔ hero
  */
 
@@ -10,7 +10,7 @@ import { create } from 'zustand'
 
 const useSceneStore = create((set, get) => ({
   // ─── State ──────────────────────────────────────────────
-  currentScene: 'loading',  // 'loading' | 'hero' | 'workspace' | 'scroll'
+  currentScene: 'hero',  // 'hero' | 'workspace' | 'scroll'
   previousScene: null,
   isTransitioning: false,
   transitionProgress: 0,    // 0 → 1 during transitions
@@ -19,15 +19,17 @@ const useSceneStore = create((set, get) => ({
   
   /**
    * Set the active scene
-   * @param {'loading' | 'hero' | 'workspace' | 'scroll'} scene
+   * @param {'hero' | 'workspace' | 'scroll'} scene
    */
   setScene: (scene) => {
-    const { currentScene } = get()
+    const { currentScene, isTransitioning } = get()
     if (currentScene === scene) return
     set({
       previousScene: currentScene,
       currentScene: scene,
-      isTransitioning: false,
+      // Keep isTransitioning if a transition is in progress
+      // Only endTransition() should reset this
+      isTransitioning,
       transitionProgress: 0,
     })
   },
@@ -51,7 +53,7 @@ const useSceneStore = create((set, get) => ({
    * End transition — call after animation completes
    */
   endTransition: () => {
-    set({ isTransitioning: false, transitionProgress: 1 })
+    set({ isTransitioning: false, transitionProgress: 1, previousScene: null })
   },
 
   // ─── Computed / Helpers ─────────────────────────────────

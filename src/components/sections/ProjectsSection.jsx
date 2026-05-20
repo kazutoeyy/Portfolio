@@ -14,9 +14,10 @@ export default function ProjectsSection() {
         padding: 'var(--section-padding) var(--content-padding)',
         maxWidth: 'var(--content-max-width)',
         margin: '0 auto',
+        borderTop: '1px solid var(--color-border)',
       }}
     >
-      <SectionHeading title="Selected Works." subtitle="Architecture & Backend Solutions" />
+      <SectionHeading title="Selected Works." subtitle="Projects" />
 
       <div
         ref={ref}
@@ -32,13 +33,19 @@ export default function ProjectsSection() {
             key={project.id}
             className="animate-stagger"
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: '24px',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-lg)',
               padding: 'var(--gap-xl)',
+              transition: 'border-color var(--transition-normal)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--color-border)';
             }}
           >
-            {/* Header: title + role + duration */}
+            {/* Header */}
             <div style={{ marginBottom: 'var(--gap-lg)' }}>
               <h3
                 style={{
@@ -46,6 +53,7 @@ export default function ProjectsSection() {
                   fontSize: 'var(--font-size-h2)',
                   color: 'var(--color-text)',
                   margin: '0 0 0.5rem 0',
+                  letterSpacing: 'var(--letter-spacing-heading)',
                 }}
               >
                 {project.title}
@@ -61,7 +69,7 @@ export default function ProjectsSection() {
                 }}
               >
                 <span>{project.role}</span>
-                <span style={{ opacity: 0.4 }}>|</span>
+                <span style={{ color: 'var(--color-text-muted)', opacity: 0.4 }}>|</span>
                 <span style={{ color: 'var(--color-text-muted)' }}>{project.duration}</span>
               </div>
             </div>
@@ -75,10 +83,9 @@ export default function ProjectsSection() {
                     fontFamily: 'var(--font-body)',
                     fontSize: 'var(--font-size-xs)',
                     color: 'var(--color-text)',
-                    background: 'rgba(124, 92, 252, 0.1)',
-                    border: '1px solid rgba(124, 92, 252, 0.2)',
+                    border: '1px solid var(--color-border)',
                     padding: '0.25rem 0.6rem',
-                    borderRadius: 'var(--radius-full)',
+                    borderRadius: 'var(--radius-sm)',
                   }}
                 >
                   {t}
@@ -106,11 +113,11 @@ export default function ProjectsSection() {
                 <strong style={{ color: 'var(--color-text)' }}>Solution:</strong> {project.solution}
               </p>
               <p style={{ margin: 0 }}>
-                <strong style={{ color: 'var(--color-accent-2)' }}>Result:</strong> {project.result}
+                <strong style={{ color: 'var(--color-primary)' }}>Result:</strong> {project.result}
               </p>
             </div>
 
-            {/* Link — only hover on this clickable element */}
+            {/* Link */}
             {project.github && (
               <a
                 href={project.github}
@@ -121,25 +128,24 @@ export default function ProjectsSection() {
                   fontWeight: 600,
                   fontSize: 'var(--font-size-small)',
                   color: 'var(--color-primary)',
-                  border: '1px solid rgba(124, 92, 252, 0.3)',
-                  background: 'rgba(124, 92, 252, 0.05)',
+                  border: '1px solid var(--color-border)',
                   padding: '0.6rem 1.2rem',
                   borderRadius: 'var(--radius-md)',
                   textDecoration: 'none',
                   display: 'inline-block',
-                  transition: 'background 0.2s ease, border-color 0.2s ease',
+                  transition: 'border-color var(--transition-fast), background var(--transition-fast)',
                   cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(124, 92, 252, 0.15)';
-                  e.currentTarget.style.borderColor = 'rgba(124, 92, 252, 0.5)';
+                  e.currentTarget.style.borderColor = 'var(--color-primary)';
+                  e.currentTarget.style.background = 'rgba(229, 75, 45, 0.08)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(124, 92, 252, 0.05)';
-                  e.currentTarget.style.borderColor = 'rgba(124, 92, 252, 0.3)';
+                  e.currentTarget.style.borderColor = 'var(--color-border)';
+                  e.currentTarget.style.background = 'transparent';
                 }}
               >
-                View Source Code →
+                View Source →
               </a>
             )}
           </article>

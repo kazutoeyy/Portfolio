@@ -3,28 +3,24 @@
  * Referenced by both R3F (3D) and DOM (2D) layers
  */
 
-// ─── Colors (hex) ───────────────────────────────────────────
+// ─── Colors (hex) — Editorial Dark ──────────────────────────
 export const COLORS = {
-  primary: '#7C5CFC',
-  accent1: '#FF6B9D',
-  accent2: '#4ECDC4',
-  neon: '#22D3EE',
-  bg: '#0F0F1A',
-  text: '#F0F0F5',
-  textMuted: '#8B8BA3',
-  surface: '#1A1A2E',
-  surfaceHover: '#252540',
+  primary: '#E54B2D',
+  neon: '#3B82F6',
+  bg: '#0A0A0A',
+  text: '#E8E8E8',
+  textMuted: '#6B6B6B',
+  surface: '#141414',
+  surfaceHover: '#1E1E1E',
 }
 
 // Three.js needs numeric hex
 export const COLORS_HEX = {
-  primary: 0x7C5CFC,
-  accent1: 0xFF6B9D,
-  accent2: 0x4ECDC4,
-  neon: 0x22D3EE,
-  bg: 0x0F0F1A,
-  text: 0xF0F0F5,
-  surface: 0x1A1A2E,
+  primary: 0xE54B2D,
+  neon: 0x3B82F6,
+  bg: 0x0A0A0A,
+  text: 0xE8E8E8,
+  surface: 0x141414,
 }
 
 // ─── Camera Positions ───────────────────────────────────────
@@ -46,23 +42,16 @@ export const CAMERA_TRANSITIONS = {
 }
 
 // ─── Floating Objects Config ────────────────────────────────
-export const FLOATING_OBJECTS = [
-  { id: 'laptop',    name: 'Laptop',    orbitRadius: 0,   orbitSpeed: 0,    scale: 1.0,  bloom: true  },
-  { id: 'uiToggle',  name: 'UI Toggle', orbitRadius: 3.0, orbitSpeed: 0.15, scale: 0.6,  bloom: true  },
-  { id: 'colorBlob', name: 'Color Blob',orbitRadius: 3.5, orbitSpeed: 0.12, scale: 0.8,  bloom: false },
-  { id: 'gear',      name: 'Gear',      orbitRadius: 4.0, orbitSpeed: 0.10, scale: 0.7,  bloom: false },
-  { id: 'phone',     name: 'Phone',     orbitRadius: 3.2, orbitSpeed: 0.13, scale: 0.7,  bloom: true  },
-  { id: 'coffee',    name: 'Coffee',    orbitRadius: 3.8, orbitSpeed: 0.11, scale: 0.6,  bloom: false },
-]
+// Removed — Hero scene now only uses single Laptop component
 
 // ─── Bloom Settings ─────────────────────────────────────────
 export const BLOOM = {
-  layer: 1,                // THREE.Layers index for selective bloom
+  layer: 1,
   threshold: 0.8,
-  strength: 0.4,
-  strengthMax: 0.6,        // clamp max — "bloom = privilege"
-  radius: 0.3,
-  maxSimultaneous: 3,      // max objects blooming at once
+  strength: 0.25,          // Reduced from 0.4
+  strengthMax: 0.4,        // Reduced from 0.6
+  radius: 0.2,             // Reduced from 0.3
+  maxSimultaneous: 3,
 }
 
 // ─── Post-Processing ────────────────────────────────────────

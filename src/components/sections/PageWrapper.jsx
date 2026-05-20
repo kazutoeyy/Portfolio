@@ -1,15 +1,24 @@
+import { useEffect } from 'react';
 import useSceneStore from '@stores/useSceneStore';
 import AboutSection from './AboutSection';
 import SkillsSection from './SkillsSection';
 import ProjectsSection from './ProjectsSection';
 import ExperienceSection from './ExperienceSection';
 import ContactSection from './ContactSection';
+import Footer from '../layout/Footer';
 
 export default function PageWrapper() {
   const currentScene = useSceneStore((s) => s.currentScene);
   const isTransitioning = useSceneStore((s) => s.isTransitioning);
 
   const isVisible = currentScene === 'workspace' && !isTransitioning;
+
+  // Reset scroll when workspace appears
+  useEffect(() => {
+    if (isVisible) {
+      window.scrollTo(0, 0);
+    }
+  }, [isVisible]);
 
   if (!isVisible) return null;
 
@@ -19,7 +28,8 @@ export default function PageWrapper() {
       style={{
         position: 'relative',
         zIndex: 10,
-        pointerEvents: 'auto'
+        pointerEvents: 'auto',
+        animation: 'fadeInSections 0.6s ease 0.2s both',
       }}
     >
       {/* Spacer — lets user see the 3D workspace first, then scroll into content */}
@@ -30,8 +40,8 @@ export default function PageWrapper() {
         style={{
           background: 'var(--color-bg)',
           position: 'relative',
-          paddingTop: 'var(--spacing-3xl, 4rem)',
-          paddingBottom: 'var(--spacing-3xl, 4rem)',
+          paddingTop: 'var(--gap-xl)',
+          paddingBottom: 'var(--gap-xl)',
           boxShadow: '0 -40px 80px rgba(0,0,0,0.7)'
         }}
       >
@@ -40,6 +50,7 @@ export default function PageWrapper() {
         <ProjectsSection />
         <ExperienceSection />
         <ContactSection />
+        <Footer />
       </div>
     </div>
   );

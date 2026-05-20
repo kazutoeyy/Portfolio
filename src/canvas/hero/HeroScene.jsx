@@ -1,18 +1,20 @@
 /**
- * HeroScene.jsx — Hero scene container
- * Contains: FloatingSystem (6 objects) + HeroText + HeroHint
+ * HeroScene.jsx — Minimalist hero scene
+ * Contains: Laptop (center) + HeroText + HeroClickHint + ParticleField
  */
 
-import FloatingSystem from './FloatingSystem'
+import Laptop from './objects/Laptop'
 import HeroText from './HeroText'
-import HeroHint from './HeroHint'
+import HeroClickHint from './HeroClickHint'
+import ParticleField from './ParticleField'
 
 export default function HeroScene() {
   return (
-    <group>
-      <FloatingSystem />
+    <group name="hero-scene">
+      <Laptop position={[0, -0.3, 0]} />
       <HeroText />
-      <HeroHint />
+      <HeroClickHint />
+      <ParticleField count={80} />
     </group>
   )
 }

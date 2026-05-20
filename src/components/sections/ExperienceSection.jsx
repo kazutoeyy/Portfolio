@@ -14,9 +14,10 @@ export default function ExperienceSection() {
         padding: 'var(--section-padding) var(--content-padding)',
         maxWidth: 'var(--content-max-width)',
         margin: '0 auto',
+        borderTop: '1px solid var(--color-border)',
       }}
     >
-      <SectionHeading title="Professional Journey." subtitle="Work Experience" />
+      <SectionHeading title="Professional Journey." subtitle="Experience" />
 
       <div
         ref={ref}
@@ -33,12 +34,11 @@ export default function ExperienceSection() {
           aria-hidden="true"
           style={{
             position: 'absolute',
-            left: '20px',
-            top: 0,
-            bottom: 0,
-            width: '2px',
-            background: 'linear-gradient(to bottom, var(--color-primary), transparent)',
-            opacity: 0.3,
+            left: '7px',
+            top: '8px',
+            bottom: '8px',
+            width: '1px',
+            background: 'var(--color-border)',
           }}
         />
 
@@ -57,36 +57,30 @@ export default function ExperienceSection() {
             <div
               aria-hidden="true"
               style={{
-                width: '40px',
-                height: '40px',
+                width: '15px',
+                height: '15px',
                 borderRadius: '50%',
                 background: 'var(--color-bg)',
                 border: '2px solid var(--color-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
                 flexShrink: 0,
-                boxShadow: '0 0 15px rgba(124, 92, 252, 0.3)',
+                marginTop: '4px',
               }}
-            >
-              <div
-                style={{
-                  width: '12px',
-                  height: '12px',
-                  borderRadius: '50%',
-                  background: 'var(--color-primary)',
-                }}
-              />
-            </div>
+            />
 
             {/* Content card */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.02)',
-                border: '1px solid rgba(255, 255, 255, 0.05)',
-                borderRadius: '20px',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-lg)',
                 padding: 'var(--gap-lg)',
                 flex: 1,
+                transition: 'border-color var(--transition-normal)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-border)';
               }}
             >
               <div
@@ -106,34 +100,35 @@ export default function ExperienceSection() {
                       fontSize: 'var(--font-size-h3)',
                       color: 'var(--color-text)',
                       margin: '0 0 0.25rem 0',
+                      letterSpacing: 'var(--letter-spacing-heading)',
                     }}
                   >
                     {exp.role}
                   </h3>
-                  <div
+                  <p
                     style={{
                       fontFamily: 'var(--font-body)',
                       fontSize: '1rem',
                       color: 'var(--color-text-muted)',
                       fontWeight: 500,
+                      margin: 0,
                     }}
                   >
                     {exp.company}
-                  </div>
+                  </p>
                 </div>
-                <div
+                <span
                   style={{
                     fontFamily: 'var(--font-body)',
                     fontSize: 'var(--font-size-small)',
                     color: 'var(--color-primary)',
-                    background: 'rgba(124, 92, 252, 0.1)',
+                    border: '1px solid var(--color-border)',
                     padding: '0.3rem 0.8rem',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid rgba(124, 92, 252, 0.2)',
+                    borderRadius: 'var(--radius-sm)',
                   }}
                 >
                   {exp.duration}
-                </div>
+                </span>
               </div>
 
               {/* Tech tags */}
@@ -145,10 +140,9 @@ export default function ExperienceSection() {
                       fontFamily: 'var(--font-body)',
                       fontSize: 'var(--font-size-xs)',
                       color: 'var(--color-text)',
-                      background: 'rgba(0, 0, 0, 0.2)',
                       padding: '0.2rem 0.6rem',
                       borderRadius: 'var(--radius-sm)',
-                      border: '1px solid rgba(255,255,255,0.05)',
+                      border: '1px solid var(--color-border)',
                     }}
                   >
                     {t}

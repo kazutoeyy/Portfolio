@@ -5,7 +5,8 @@ import { LIGHTING } from '../../utils/constants'
 
 export default function Lighting() {
   const { theme } = useThemeStore()
-  const { currentScene } = useSceneStore()
+  const currentScene = useSceneStore((s) => s.currentScene)
+  const isTransitioning = useSceneStore((s) => s.isTransitioning)
   const groupRef = useRef()
 
   // Base intensity based on theme (Light theme is brighter)
@@ -13,8 +14,8 @@ export default function Lighting() {
   const ambientIntensity = theme === 'light' ? 0.5 : LIGHTING.hero.ambient.intensity
 
   // Hero scene lighting
-  // Workspace scene lighting will be handled by WorkspaceScene/RoomLighting
-  if (currentScene === 'workspace') {
+  // Only hide when workspace is settled (not during transitions)
+  if (currentScene === 'workspace' && !isTransitioning) {
     return null
   }
 

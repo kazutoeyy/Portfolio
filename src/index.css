@@ -5,22 +5,21 @@
 /* Fonts loaded via Fontshare CDN in index.html
    Will switch to self-hosted @font-face in Phase 9 optimization */
 
-/* --- Design Tokens (Dark Theme — Default) --- */
+/* --- Design Tokens (Editorial Dark — Default) --- */
 :root {
-  /* Colors */
-  --color-primary: #7C5CFC;
-  --color-accent-1: #FF6B9D;
-  --color-accent-2: #4ECDC4;
-  --color-neon: #22D3EE;
-  --color-bg: #0F0F1A;
-  --color-text: #F0F0F5;
-  --color-text-muted: #8B8BA3;
-  --color-surface: #1A1A2E;
-  --color-surface-hover: #252540;
+  /* Colors — Editorial Dark palette */
+  --color-primary: #E54B2D;
+  --color-neon: #3B82F6;
+  --color-bg: #0A0A0A;
+  --color-text: #E8E8E8;
+  --color-text-muted: #6B6B6B;
+  --color-surface: #141414;
+  --color-surface-hover: #1E1E1E;
+  --color-border: rgba(255, 255, 255, 0.08);
 
-  /* Typography */
-  --font-heading: 'Clash Display', 'Inter', sans-serif;
-  --font-body: 'Satoshi', 'Inter', sans-serif;
+  /* Typography — Space Grotesk + Inter */
+  --font-heading: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
   --font-size-hero: clamp(3rem, 8vw, 7rem);
   --font-size-h1: clamp(2rem, 5vw, 4rem);
   --font-size-h2: clamp(1.5rem, 3vw, 2.5rem);
@@ -28,13 +27,13 @@
   --font-size-body: 1.125rem;
   --font-size-small: 0.875rem;
   --font-size-xs: 0.75rem;
-  --letter-spacing-heading: -0.02em;
+  --letter-spacing-heading: -0.025em;
   --letter-spacing-body: 0;
-  --line-height-heading: 1.1;
+  --line-height-heading: 1.05;
   --line-height-body: 1.6;
 
-  /* Spacing */
-  --section-padding: clamp(4rem, 10vh, 8rem);
+  /* Spacing — increased for editorial feel */
+  --section-padding: clamp(6rem, 12vh, 10rem);
   --content-max-width: 1200px;
   --content-padding: clamp(1.5rem, 4vw, 3rem);
   --gap-xs: 0.25rem;
@@ -46,8 +45,8 @@
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -58,18 +57,59 @@
   /* Z-index */
   --z-canvas: 1;
   --z-content: 10;
+  --z-header: 50;
   --z-ui: 100;
+  --z-transition: 5000;
   --z-cursor: 9999;
-  --z-loading: 10000;
 }
 
-/* --- Light Theme Override --- */
+/* --- Light Theme Override (Resume page) --- */
 [data-theme="light"] {
-  --color-bg: #F5F5F0;
-  --color-text: #0F0F1A;
-  --color-text-muted: #6B6B80;
+  --color-bg: #FAFAFA;
+  --color-text: #111111;
+  --color-text-muted: #555555;
   --color-surface: #FFFFFF;
-  --color-surface-hover: #F0F0F5;
+  --color-surface-hover: #F5F5F5;
+  --color-border: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body,
+[data-theme="light"] button,
+[data-theme="light"] a {
+  cursor: auto;
+}
+
+/* --- Warm Theme — Thủy Mặc (Ink Wash) --- */
+[data-theme="warm"] {
+  --color-primary: #ed6f5c;
+  --color-neon: #e9b94a;
+  --color-bg: #efe7d2;
+  --color-text: #15140f;
+  --color-text-muted: #5a5448;
+  --color-surface: #ece4cf;
+  --color-surface-hover: #e5dcc5;
+  --color-border: rgba(21, 20, 15, 0.12);
+  --header-bg: rgba(239, 231, 210, 0.88);
+}
+
+/* Thủy Mặc ink wash texture for warm theme */
+[data-theme="warm"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  background-image: url("/textures/black-white-grunge-background.png");
+  background-size: cover;
+  background-position: center;
+  mix-blend-mode: multiply;
+  opacity: 0.15;
+}
+
+/* Warm theme text selection */
+[data-theme="warm"] ::selection {
+  background-color: #ed6f5c;
+  color: #efe7d2;
 }
 
 /* --- Reset & Base --- */
@@ -195,4 +235,16 @@ input, textarea {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* --- Transition Animations --- */
+@keyframes fadeInSections {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

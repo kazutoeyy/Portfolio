@@ -66,8 +66,7 @@ export default function ContactSection() {
     width: '44px',
     height: '44px',
     borderRadius: '50%',
-    background: 'rgba(124, 92, 252, 0.08)',
-    border: '1px solid rgba(124, 92, 252, 0.15)',
+    border: '1px solid var(--color-border)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -76,10 +75,10 @@ export default function ContactSection() {
   };
 
   const inputStyle = {
-    background: 'rgba(0,0,0,0.2)',
-    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'var(--color-surface)',
+    border: '1px solid var(--color-border)',
     padding: '0.85rem 1rem',
-    borderRadius: 'var(--radius-lg)',
+    borderRadius: 'var(--radius-md)',
     color: 'var(--color-text)',
     fontFamily: 'var(--font-body)',
     fontSize: 'var(--font-size-body)',
@@ -94,6 +93,7 @@ export default function ContactSection() {
         padding: 'var(--section-padding) var(--content-padding)',
         maxWidth: 'var(--content-max-width)',
         margin: '0 auto',
+        borderTop: '1px solid var(--color-border)',
       }}
     >
       <SectionHeading title="Let's Connect." subtitle="Get In Touch" />
@@ -220,9 +220,8 @@ export default function ContactSection() {
           className="animate-stagger"
           onSubmit={handleSubmit}
           style={{
-            background: 'rgba(255, 255, 255, 0.02)',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
-            borderRadius: '24px',
+            border: '1px solid var(--color-border)',
+            borderRadius: 'var(--radius-lg)',
             padding: 'var(--gap-xl)',
             display: 'flex',
             flexDirection: 'column',
@@ -246,7 +245,7 @@ export default function ContactSection() {
                 type={label === 'Email' ? 'email' : 'text'}
                 style={inputStyle}
                 onFocus={(e) => (e.target.style.borderColor = 'var(--color-primary)')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
+                onBlur={(e) => (e.target.style.borderColor = 'var(--color-border)')}
               />
             </div>
           ))}
@@ -267,7 +266,7 @@ export default function ContactSection() {
               rows={5}
               style={{ ...inputStyle, resize: 'none' }}
               onFocus={(e) => (e.target.style.borderColor = 'var(--color-primary)')}
-              onBlur={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
+              onBlur={(e) => (e.target.style.borderColor = 'var(--color-border)')}
             />
           </div>
 
