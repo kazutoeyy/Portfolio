@@ -66,7 +66,14 @@ const SECTIONS = {
     {
       name: 'EV Battery Trading Platform',
       tech: 'Spring Boot, Hibernate, Spring Security(JWT), SQL Server, VNPay, DocuSeal API, Cloudinary, RESTful API',
-      description: 'B2B trading platform for electric vehicle batteries with real-time bidding, supply chain tracking, and automated compliance reporting.',
+      description: ['B2B trading platform for electric vehicle batteries with real-time bidding, supply chain tracking, and automated compliance reporting.',
+        'Architected entire backend infrastructure from scratch and designed a normalized SQL Server database with 17 tables supporting complex order life-cycles and RBAC for 5 distinct actor types.',
+        'Engineered a secure escrow payment system integrated with VNPay, implementing state-machine flows for automated dispute resolution and refunds.',
+        'Integrated DocuSeal API via webhooks to automate legally-binding electronic contract generation upon checkout.',
+        'Implemented intelligent price suggestion engine using Google Gemini AI to assist sellers based on vehicle conditions.',
+        'Built real-time chat and notification system with WebSocket (STOMP) for seamless buyer-seller communication.',
+        'Designed and secured 100+ RESTful APIs using Spring Security (JWT) and Hibernate, optimized complex product filtering queries while mitigating common security vulnerabilities'
+      ],
     },
   ],
 
@@ -85,10 +92,69 @@ export default function ResumePage() {
 
   return (
     <div style={s.page}>
+      {/* Dynamic CSS Stylesheet for print and responsiveness */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          body, html, #root {
+            background: #ffffff !important;
+            color: #111111 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .print-card {
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+          }
+          .cv-section {
+            page-break-inside: avoid;
+            margin-bottom: 1.2rem !important;
+          }
+          .cv-hr {
+            margin: 1rem 0 !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .cv-card {
+            padding: 2rem 1.5rem !important;
+          }
+          .cv-name {
+            font-size: 2rem !important;
+          }
+          .cv-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.2rem;
+          }
+          .cv-period {
+            text-align: left !important;
+          }
+          .cv-skill-row {
+            grid-template-columns: 1fr !important;
+            gap: 0.2rem !important;
+          }
+          .cv-contact {
+            flex-direction: column;
+            gap: 0.25rem !important;
+          }
+          .cv-contact span {
+            display: none !important;
+          }
+        }
+      `}} />
+
       {/* Fixed download button */}
       <a
         href="/Nguyen-Bui-Gia-Huy.pdf"
         download
+        className="no-print"
         style={s.downloadBtn}
         onMouseEnter={(e) => { e.currentTarget.style.background = '#D43D22' }}
         onMouseLeave={(e) => { e.currentTarget.style.background = '#E54B2D' }}
@@ -97,15 +163,15 @@ export default function ResumePage() {
       </a>
 
       {/* Back link */}
-      <a href="/" style={s.backLink}>← Back to Portfolio</a>
+      <a href="/" className="no-print" style={s.backLink}>← Back to Portfolio</a>
 
       {/* Single A4-style card */}
-      <div style={s.card}>
+      <div className="print-card cv-card" style={s.card}>
         {/* Header */}
         <header style={s.header}>
-          <h1 style={s.name}>Nguyễn Bùi Gia Huy</h1>
+          <h1 className="cv-name" style={s.name}>Nguyễn Bùi Gia Huy</h1>
           <p style={s.role}>Backend Engineer</p>
-          <div style={s.contactRow}>
+          <div className="cv-contact" style={s.contactRow}>
             <span>Ho Chi Minh City, Vietnam</span>
             <span style={s.dot}>·</span>
             <a href="mailto:nguyenbuigiahuy2507@gmail.com" style={s.link}>nguyenbuigiahuy2507@gmail.com</a>
@@ -114,40 +180,42 @@ export default function ResumePage() {
           </div>
         </header>
 
-        <hr style={s.hr} />
+        <hr className="cv-hr" style={s.hr} />
 
         {/* Summary */}
-        <section>
+        <section className="cv-section" style={s.section}>
           <h2 style={s.h2}>Summary</h2>
           <p style={s.body}>{SECTIONS.summary}</p>
         </section>
 
-        <hr style={s.hr} />
+        <hr className="cv-hr" style={s.hr} />
 
         {/* Education */}
-        <section>
+        <section className="cv-section" style={s.section}>
           <h2 style={s.h2}>Education</h2>
-          <div style={s.row}>
+          <div className="cv-row" style={s.row}>
             <div>
               <strong style={s.strong}>{SECTIONS.education.school}</strong>
               <p style={s.sub}>{SECTIONS.education.degree}</p>
             </div>
-            <div style={s.period}>
-              <div>{SECTIONS.education.period}</div>
+            <div className="cv-period" style={s.period}>
+              <div style={s.dateText}>{SECTIONS.education.period}</div>
               <div style={s.sub}>{SECTIONS.education.location}</div>
             </div>
           </div>
-          <p style={s.body}>GPA: {SECTIONS.education.gpa}</p>
+          <p style={{ ...s.body, marginTop: '0.4rem', fontSize: '0.9rem' }}>
+            <strong>GPA:</strong> {SECTIONS.education.gpa}
+          </p>
         </section>
 
-        <hr style={s.hr} />
+        <hr className="cv-hr" style={s.hr} />
 
         {/* Technical Skills */}
-        <section>
+        <section className="cv-section" style={s.section}>
           <h2 style={s.h2}>Technical Skills</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {SECTIONS.skills.map((sk) => (
-              <div key={sk.category} style={s.skillRow}>
+              <div key={sk.category} className="cv-skill-row" style={s.skillRow}>
                 <span style={s.skillCat}>{sk.category}</span>
                 <span style={s.body}>{sk.items}</span>
               </div>
@@ -155,19 +223,21 @@ export default function ResumePage() {
           </div>
         </section>
 
-        <hr style={s.hr} />
+        <hr className="cv-hr" style={s.hr} />
 
         {/* Work Experience */}
-        <section>
+        <section className="cv-section" style={s.section}>
           <h2 style={s.h2}>Work Experience</h2>
-          {SECTIONS.experience.map((exp) => (
-            <div key={exp.role} style={{ marginBottom: '1.5rem' }}>
-              <div style={s.row}>
+          {SECTIONS.experience.map((exp, idx) => (
+            <div key={exp.role} style={{ marginBottom: idx === SECTIONS.experience.length - 1 ? 0 : '1.25rem' }}>
+              <div className="cv-row" style={s.row}>
                 <div>
                   <strong style={s.strong}>{exp.role}</strong>
                   <p style={s.sub}>{exp.company}</p>
                 </div>
-                <span style={s.period}>{exp.period}</span>
+                <div className="cv-period" style={s.period}>
+                  <span style={s.dateText}>{exp.period}</span>
+                </div>
               </div>
               <ul style={s.ul}>
                 {exp.bullets.map((b, i) => (
@@ -178,29 +248,37 @@ export default function ResumePage() {
           ))}
         </section>
 
-        <hr style={s.hr} />
+        <hr className="cv-hr" style={s.hr} />
 
         {/* Projects */}
-        <section>
+        <section className="cv-section" style={s.section}>
           <h2 style={s.h2}>Projects</h2>
-          {SECTIONS.projects.map((p) => (
-            <div key={p.name} style={{ marginBottom: '1.25rem' }}>
-              <strong style={s.strong}>{p.name}</strong>
-              <p style={{ ...s.sub, margin: '0.2rem 0' }}>{p.tech}</p>
-              <p style={s.body}>{p.description}</p>
+          {SECTIONS.projects.map((p, idx) => (
+            <div key={p.name} style={{ marginBottom: idx === SECTIONS.projects.length - 1 ? 0 : '1.5rem' }}>
+              <div className="cv-row" style={s.row}>
+                <div>
+                  <strong style={s.strong}>{p.name}</strong>
+                </div>
+              </div>
+              <p style={s.tech}>{p.tech}</p>
+              <ul style={s.ul}>
+                {p.description.map((desc, i) => (
+                  <li key={i} style={s.li}>{desc}</li>
+                ))}
+              </ul>
             </div>
           ))}
         </section>
 
-        <hr style={s.hr} />
+        <hr className="cv-hr" style={s.hr} />
 
         {/* Languages */}
-        <section>
+        <section className="cv-section" style={s.section}>
           <h2 style={s.h2}>Languages</h2>
-          <div style={{ display: 'flex', gap: '2rem' }}>
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             {SECTIONS.languages.map((l) => (
               <span key={l.lang} style={s.body}>
-                <strong>{l.lang}</strong> — {l.level}
+                <strong style={{ color: '#111' }}>{l.lang}</strong> — {l.level}
               </span>
             ))}
           </div>
@@ -214,17 +292,18 @@ export default function ResumePage() {
 const s = {
   page: {
     minHeight: '100vh',
-    background: '#EBEBEB',
-    padding: '2rem 1.5rem 4rem',
+    background: '#F1F5F9', // Subtle, professional slate background
+    padding: '2.5rem 1.5rem 5rem',
     fontFamily: "'Inter', sans-serif",
+    color: '#334155',
   },
   card: {
-    maxWidth: '800px',
+    maxWidth: '820px',
     margin: '0 auto',
     background: '#FFFFFF',
-    borderRadius: '12px',
-    padding: '3rem 3.5rem',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.04), 0 12px 28px rgba(0,0,0,0.08), 0 24px 56px rgba(0,0,0,0.06)',
+    borderRadius: '8px', // More professional CV style border radius
+    padding: '3.5rem 4rem',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.04)',
     position: 'relative',
   },
   downloadBtn: {
@@ -234,101 +313,143 @@ const s = {
     background: '#E54B2D',
     color: '#fff',
     padding: '0.6rem 1.4rem',
-    borderRadius: '8px',
+    borderRadius: '6px',
     textDecoration: 'none',
     fontFamily: "'Space Grotesk', sans-serif",
     fontWeight: 600,
     fontSize: '0.875rem',
     zIndex: 100,
     cursor: 'pointer',
-    transition: 'background 0.2s ease',
-    boxShadow: '0 2px 8px rgba(229,75,45,0.3)',
+    transition: 'background 0.2s ease, transform 0.1s ease',
+    boxShadow: '0 4px 12px rgba(229,75,45,0.2)',
   },
   backLink: {
-    display: 'inline-block',
-    marginBottom: '1.5rem',
-    color: '#888',
+    display: 'block',
+    color: '#64748B',
     textDecoration: 'none',
     fontSize: '0.875rem',
+    fontWeight: 500,
     cursor: 'pointer',
-    maxWidth: '800px',
-    margin: '0 auto 1rem',
+    maxWidth: '820px',
+    margin: '0 auto 1.5rem',
+    transition: 'color 0.2s ease',
   },
-  header: { marginBottom: '0.25rem' },
+  header: { marginBottom: '0.5rem' },
   name: {
     fontFamily: "'Space Grotesk', sans-serif",
-    fontSize: '2.5rem',
+    fontSize: '2.25rem',
     fontWeight: 700,
-    margin: '0 0 0.25rem 0',
-    letterSpacing: '-0.025em',
+    margin: '0 0 0.2rem 0',
+    letterSpacing: '-0.02em',
     lineHeight: 1.1,
-    color: '#111',
+    color: '#0F172A',
   },
   role: {
-    fontSize: '1.1rem',
-    color: '#555',
-    margin: '0 0 0.75rem 0',
+    fontSize: '1.05rem',
+    fontWeight: 500,
+    color: '#E54B2D', // Use primary branding color for role
+    margin: '0 0 0.5rem 0',
+    letterSpacing: '0.02em',
+    textTransform: 'uppercase',
   },
   contactRow: {
     display: 'flex',
-    gap: '0.5rem',
+    gap: '0.6rem',
     flexWrap: 'wrap',
-    fontSize: '0.875rem',
-    color: '#666',
+    fontSize: '0.85rem',
+    color: '#64748B',
+    alignItems: 'center',
   },
-  dot: { color: '#ccc' },
-  link: { color: '#E54B2D', textDecoration: 'none' },
+  dot: { color: '#CBD5E1' },
+  link: { 
+    color: '#64748B', 
+    textDecoration: 'none', 
+    borderBottom: '1px solid transparent',
+    transition: 'color 0.2s ease, border-color 0.2s ease',
+  },
   hr: {
     border: 'none',
-    borderTop: '1px solid #E8E8E8',
-    margin: '1.5rem 0',
+    borderTop: '1px solid #E2E8F0',
+    margin: '1.25rem 0',
   },
   h2: {
     fontFamily: "'Space Grotesk', sans-serif",
-    fontSize: '0.95rem',
-    fontWeight: 600,
+    fontSize: '0.85rem',
+    fontWeight: 700,
     textTransform: 'uppercase',
-    letterSpacing: '0.1em',
-    color: '#111',
-    marginBottom: '1rem',
+    letterSpacing: '0.12em',
+    color: '#0F172A',
+    marginBottom: '0.75rem',
   },
   body: {
-    fontSize: '0.95rem',
-    lineHeight: 1.6,
-    color: '#444',
+    fontSize: '0.925rem',
+    lineHeight: 1.55,
+    color: '#334155',
     margin: 0,
   },
-  strong: { fontSize: '1rem', color: '#111' },
-  sub: { fontSize: '0.85rem', color: '#777', margin: '0.1rem 0 0 0' },
+  strong: { 
+    fontSize: '0.975rem', 
+    fontWeight: 600,
+    color: '#0F172A' 
+  },
+  sub: { 
+    fontSize: '0.875rem', 
+    fontWeight: 500,
+    color: '#64748B', 
+    margin: '0.15rem 0 0 0' 
+  },
+  tech: {
+    fontSize: '0.825rem',
+    fontWeight: 600,
+    fontFamily: 'monospace',
+    color: '#64748B',
+    background: '#F8FAFC',
+    padding: '0.2rem 0.5rem',
+    borderRadius: '4px',
+    display: 'inline-block',
+    margin: '0.25rem 0 0.5rem 0',
+    border: '1px solid #F1F5F9',
+  },
   row: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: '0.5rem',
+    marginBottom: '0.25rem',
   },
   period: {
-    fontSize: '0.875rem',
-    color: '#888',
+    fontSize: '0.85rem',
+    color: '#64748B',
     textAlign: 'right',
     whiteSpace: 'nowrap',
   },
+  dateText: {
+    fontWeight: 600,
+    color: '#475569',
+  },
   skillRow: {
     display: 'grid',
-    gridTemplateColumns: '120px 1fr',
-    gap: '1rem',
-    fontSize: '0.95rem',
+    gridTemplateColumns: '170px 1fr',
+    gap: '1.25rem',
+    fontSize: '0.925rem',
+    alignItems: 'baseline',
   },
-  skillCat: { fontWeight: 600, color: '#111' },
+  skillCat: { 
+    fontWeight: 600, 
+    color: '#334155',
+  },
   ul: {
-    margin: 0,
-    paddingLeft: '1.2rem',
+    margin: '0.5rem 0 0 0',
+    paddingLeft: '1.15rem',
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.3rem',
+    gap: '0.35rem',
   },
   li: {
     fontSize: '0.9rem',
     lineHeight: 1.5,
-    color: '#444',
+    color: '#475569',
   },
+  section: {
+    margin: 0,
+  }
 }

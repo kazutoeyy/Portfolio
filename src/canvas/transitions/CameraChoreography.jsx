@@ -176,7 +176,7 @@ export default function CameraChoreography() {
     })
     timelineRef.current = tl
 
-    // ── Reset: portal fullscreen, covers workspace ──
+    // ── Reset: portal fullscreen camera-tracking ──
     if (portal) {
       portal.visible = true
       portal.material.opacity = 0
@@ -204,29 +204,16 @@ export default function CameraChoreography() {
       const heroGroup = scene.getObjectByName('hero-scene')
       if (heroGroup) heroGroup.visible = true
 
-      // Position camera from screen's actual world position (accounts for floating offset)
+      // Camera close to laptop — portal stays camera-tracking (no mode switch)
+      camera.position.set(0, 0, ZOOM_CLOSE_Z)
+      camera.rotation.set(0, 0, 0)
+
+      // Restore laptop screen (visible behind fading portal)
       const screen = scene.getObjectByName('laptop-screen')
-      if (screen) {
-        screen.updateWorldMatrix(true, false)
-        screen.getWorldPosition(_wp)
-        camera.position.set(_wp.x, _wp.y, _wp.z + 1.07)
-        camera.lookAt(_wp)
-      } else {
-        camera.position.set(0, 0, 0.5)
-        camera.rotation.set(0, 0, 0)
-      }
-
-      // Portal → laptop-tracking (screen fills viewport, no visual jump)
-      if (portal) {
-        portal.userData.trackMode = 'laptop'
-        portal.scale.set(SCREEN_SCALE.x, SCREEN_SCALE.y, 1)
-      }
-
-      // Keep laptop screen hidden — portal replaces it
-      if (screen) screen.visible = false
+      if (screen) screen.visible = true
     })
 
-    // ── Phase C: Camera zoom OUT (1.5s) — laptop body appears around screen ──
+    // ── Phase C: Camera zoom OUT + portal dissolve (simultaneous) ──
     tl.to(camera.position, {
       x: CAMERA.hero.position[0],
       y: CAMERA.hero.position[1],
@@ -235,18 +222,16 @@ export default function CameraChoreography() {
       ease: 'power2.inOut',
     }, '+=0.05')
 
-    // ── Phase D: Portal fade near end + restore screen ──
+    // Portal fades as camera zooms — dissolve into hero scene
     if (portal) {
       tl.to(portal.material, {
         opacity: 0,
-        duration: 0.6,
-        ease: 'sine.inOut',
-      }, '<+=0.9')
+        duration: 1.5,
+        ease: 'power2.inOut',
+      }, '<')
 
       tl.call(() => {
         portal.visible = false
-        const screen = scene.getObjectByName('laptop-screen')
-        if (screen) screen.visible = true
       })
     }
   }, [scene, camera, getPortal, getFullScale])
