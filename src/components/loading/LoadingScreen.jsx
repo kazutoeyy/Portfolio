@@ -1,194 +1,117 @@
-/**
- * LoadingScreen.jsx — Creative loading experience
- * Features: progress tracking, text reveal animation, smooth fade to hero
- * Target: < 3 seconds, no boring progress bar
- */
-
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import { useProgress } from '@react-three/drei'
+import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import useSceneStore from '../../stores/useSceneStore'
+import BrushStrokePath from './BrushStrokePath'
+
+gsap.registerPlugin(useGSAP)
 
 export default function LoadingScreen() {
   const containerRef = useRef(null)
-  const progressRef = useRef(null)
-  const textRefs = useRef([])
-  const lineRef = useRef(null)
-  const [progress, setProgress] = useState(0)
+  const svgRef = useRef(null)
   const { currentScene, setScene } = useSceneStore()
-
-  // Simulate loading progress (will be replaced with useProgress from Drei later)
+  
+  // Real progress from Three.js + fake progress to ensure it moves
+  const { progress: r3fProgress } = useProgress()
+  const [visualProgress, setVisualProgress] = useState(0)
+  
+  // We want visual progress to smoothly catch up to r3fProgress, and definitely reach 100
   useEffect(() => {
     if (currentScene !== 'loading') return
-
-    let frame
-    let start = null
-    const duration = 2200 // ms
-
-    const animate = (timestamp) => {
-      if (!start) start = timestamp
-      const elapsed = timestamp - start
-      const p = Math.min(elapsed / duration, 1)
-      // Eased progress curve
-      const eased = 1 - Math.pow(1 - p, 3)
-      setProgress(Math.round(eased * 100))
-
-      if (p < 1) {
-        frame = requestAnimationFrame(animate)
+    
+    // Give an initial bump so the user sees something happening
+    const targetProgress = Math.max(r3fProgress, 10)
+    
+    gsap.to({ val: visualProgress }, {
+      val: targetProgress,
+      duration: 0.5,
+      onUpdate: function() {
+        setVisualProgress(Math.round(this.targets()[0].val))
       }
-    }
+    })
+    
+    // Simulate progress if R3F loading is too fast or stuck
+    const timer = setInterval(() => {
+      setVisualProgress(p => {
+        if (p >= 99 && r3fProgress < 100) return p // Wait at 99% for real loading
+        return Math.min(100, p + 1)
+      })
+    }, 100)
+    
+    return () => clearInterval(timer)
+  }, [r3fProgress, currentScene])
 
-    frame = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(frame)
-  }, [currentScene])
-
-  // Text reveal animation on mount
-  useEffect(() => {
+  useGSAP(() => {
     if (currentScene !== 'loading') return
+    
+    const textEl = svgRef.current?.querySelector('text')
+    if (!textEl) return
 
-    const tl = gsap.timeline()
-
-    // Stagger reveal text lines
-    tl.fromTo(
-      textRefs.current,
-      { y: 40, opacity: 0, filter: 'blur(8px)' },
-      {
-        y: 0,
-        opacity: 1,
-        filter: 'blur(0px)',
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out',
-      }
-    )
-
-    // Animate progress line
-    if (lineRef.current) {
-      tl.fromTo(
-        lineRef.current,
-        { scaleX: 0 },
-        { scaleX: 1, duration: 2, ease: 'power2.inOut' },
-        0.3
-      )
+    // 1. Initialize stroke
+    if (visualProgress === 0) {
+      gsap.set(textEl, { 
+        strokeDashoffset: 400,
+        stroke: 'var(--color-rust)' 
+      })
     }
-
-    return () => tl.kill()
-  }, [currentScene])
-
-  // Transition out when progress reaches 100
-  useEffect(() => {
-    if (progress < 100) return
-
-    const timer = setTimeout(() => {
-      const container = containerRef.current
-      if (!container) return
-
-      gsap.to(container, {
-        opacity: 0,
-        scale: 1.05,
-        filter: 'blur(10px)',
-        duration: 0.8,
-        ease: 'power2.inOut',
+    
+    // 2. Animate drawing as progress increases
+    gsap.to(textEl, {
+      strokeDashoffset: 400 - (visualProgress / 100) * 400,
+      duration: 0.3,
+      ease: 'power1.out'
+    })
+    
+    // 3. When 100%, trigger the drying & fade out sequence
+    if (visualProgress >= 100) {
+      const tl = gsap.timeline({
         onComplete: () => {
           setScene('hero')
-        },
+        }
       })
-    }, 400) // Small delay after 100% before transitioning
+      
+      tl.to(textEl, {
+        fill: 'var(--color-rust)', // Fill in wet ink
+        duration: 0.6,
+        ease: 'power2.inOut'
+      })
+      .to(textEl, {
+        stroke: 'var(--color-ash)', // Dries to ash
+        fill: 'var(--color-ash)',
+        duration: 0.8,
+        ease: 'power2.inOut'
+      }, "+=0.2") // Wait slightly
+      .to(containerRef.current, {
+        opacity: 0,
+        filter: 'blur(10px)',
+        scale: 1.05,
+        duration: 1.2,
+        ease: 'power3.inOut'
+      }, "+=0.4")
+    }
+    
+  }, { dependencies: [visualProgress, currentScene], scope: containerRef })
 
-    return () => clearTimeout(timer)
-  }, [progress, setScene])
-
-  // Don't render if not in loading state
   if (currentScene !== 'loading') return null
 
   return (
     <div
       ref={containerRef}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 'var(--z-loading, 10000)',
-        background: '#0F0F1A',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '2rem',
-      }}
+      className="fixed inset-0 z-[10000] bg-void flex flex-col items-center justify-center pointer-events-auto"
     >
-      {/* Text Reveal */}
-      <div style={{ textAlign: 'center' }}>
-        <p
-          ref={(el) => { textRefs.current[0] = el }}
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 'var(--font-size-small)',
-            color: 'var(--color-text-muted)',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            marginBottom: '1rem',
-          }}
-        >
-          Crafting experience
-        </p>
-        <h1
-          ref={(el) => { textRefs.current[1] = el }}
-          style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: 'clamp(2rem, 5vw, 4rem)',
-            color: 'var(--color-text)',
-            letterSpacing: '-0.02em',
-            lineHeight: 1.1,
-          }}
-        >
-          Portfolio
-        </h1>
-        <p
-          ref={(el) => { textRefs.current[2] = el }}
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 'var(--font-size-body)',
-            color: 'var(--color-primary)',
-            marginTop: '0.5rem',
-          }}
-        >
-          Interactive 3D Experience
-        </p>
+      <div className="w-full max-w-md px-8 opacity-90 flex flex-col items-center">
+        <BrushStrokePath ref={svgRef} />
+        
+        <div className="mt-12 flex flex-col items-center gap-3">
+          <p className="font-mono text-faint text-[10px] tracking-[0.2em] uppercase">
+            Loading Experience
+          </p>
+          <p className="font-mono text-muted text-sm tracking-widest tabular-nums">
+            {visualProgress.toString().padStart(3, '0')}%
+          </p>
+        </div>
       </div>
-
-      {/* Progress Line */}
-      <div
-        style={{
-          width: '200px',
-          height: '2px',
-          background: 'var(--color-surface)',
-          borderRadius: '1px',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          ref={lineRef}
-          style={{
-            width: '100%',
-            height: '100%',
-            background: 'linear-gradient(90deg, var(--color-primary), var(--color-neon))',
-            transformOrigin: 'left center',
-            transform: 'scaleX(0)',
-          }}
-        />
-      </div>
-
-      {/* Progress Number */}
-      <p
-        ref={(el) => { textRefs.current[3] = el }}
-        style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: 'var(--font-size-small)',
-          color: 'var(--color-text-muted)',
-          fontVariantNumeric: 'tabular-nums',
-        }}
-      >
-        {progress}%
-      </p>
     </div>
   )
 }

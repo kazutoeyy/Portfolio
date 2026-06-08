@@ -1,36 +1,47 @@
-import { useRef } from 'react';
-import useScrollAnimation from '@hooks/useScrollAnimation';
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 
-export default function SectionHeading({ title, subtitle }) {
-  const ref = useRef(null);
-  useScrollAnimation(ref, { yOffset: 20, duration: 0.8 });
+export default function SectionHeading({ number, title }) {
+  const headingRef = useRef(null)
+  
+  useGSAP(() => {
+    // Breathing reveal: letter spacing tight to normal, opacity fade in
+    gsap.fromTo(headingRef.current,
+      { letterSpacing: '-0.03em', opacity: 0, y: 20 },
+      { 
+        letterSpacing: '0.05em', 
+        opacity: 1, 
+        y: 0, 
+        duration: 1.5, 
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: headingRef.current,
+          start: 'top 85%',
+        }
+      }
+    )
+  }, { scope: headingRef })
 
   return (
-    <div ref={ref} style={{ marginBottom: 'var(--gap-xl)' }}>
-      {subtitle && (
-        <p style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: 'var(--font-size-small)',
-          color: 'var(--color-primary)',
-          fontWeight: 500,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          marginBottom: '0.75rem',
-        }}>
-          {subtitle}
-        </p>
-      )}
-      <h2 style={{
-        fontFamily: 'var(--font-heading)',
-        fontSize: 'var(--font-size-h1)',
-        fontWeight: 700,
-        color: 'var(--color-text)',
-        margin: 0,
-        letterSpacing: 'var(--letter-spacing-heading)',
-        lineHeight: 'var(--line-height-heading)',
-      }}>
+    <div className="relative mb-16 md:mb-24 flex items-center">
+      {/* Vertical Number Label */}
+      <div className="absolute -left-10 md:-left-20 top-2 font-mono text-faint text-xs md:text-sm -rotate-90 origin-top-right tracking-widest pointer-events-none">
+        {number}
+      </div>
+      
+      {/* Main Title */}
+      <h2 
+        ref={headingRef}
+        className="font-serif italic text-4xl md:text-6xl text-primary pr-8"
+      >
         {title}
       </h2>
+      
+      {/* Accent Line */}
+      <div className="flex-1 h-[1px] bg-white/5 relative origin-left">
+        <div className="absolute left-0 top-0 h-full w-16 bg-rust/60" />
+      </div>
     </div>
-  );
+  )
 }

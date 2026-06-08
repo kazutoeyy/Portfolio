@@ -1,250 +1,84 @@
-/* ============================================
-   Portfolio 3D — Design Tokens & Global Styles
-   ============================================ */
+@import "tailwindcss";
 
-/* Fonts loaded via Fontshare CDN in index.html
-   Will switch to self-hosted @font-face in Phase 9 optimization */
+@theme {
+  --color-void: #0A0A0A;
+  --color-ink: #1A1814;
+  --color-soot: #1E1B17;
+  --color-ash: #3A3530;
+  --color-stone: #7A7268;
+  --color-washi: #C0B8AE;
+  --color-rice: #E8E2D9;
+  --color-rust: #8B3A2A;
+  --color-vermillion: #C0392B;
+  
+  /* Aliases to maintain backward compatibility with other sections */
+  --color-primary: var(--color-rice);
+  --color-muted: var(--color-stone);
+  --color-faint: var(--color-ash);
+  --color-surface: var(--color-ink);
 
-/* --- Design Tokens (Editorial Dark — Default) --- */
-:root {
-  /* Colors — Editorial Dark palette */
-  --color-primary: #E54B2D;
-  --color-neon: #3B82F6;
-  --color-bg: #0A0A0A;
-  --color-text: #E8E8E8;
-  --color-text-muted: #6B6B6B;
-  --color-surface: #141414;
-  --color-surface-hover: #1E1E1E;
-  --color-border: rgba(255, 255, 255, 0.08);
-
-  /* Typography — Space Grotesk + Inter */
-  --font-heading: 'Space Grotesk', 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-size-hero: clamp(3rem, 8vw, 7rem);
-  --font-size-h1: clamp(2rem, 5vw, 4rem);
-  --font-size-h2: clamp(1.5rem, 3vw, 2.5rem);
-  --font-size-h3: clamp(1.25rem, 2vw, 1.75rem);
-  --font-size-body: 1.125rem;
-  --font-size-small: 0.875rem;
-  --font-size-xs: 0.75rem;
-  --letter-spacing-heading: -0.025em;
-  --letter-spacing-body: 0;
-  --line-height-heading: 1.05;
-  --line-height-body: 1.6;
-
-  /* Spacing — increased for editorial feel */
-  --section-padding: clamp(6rem, 12vh, 10rem);
-  --content-max-width: 1200px;
-  --content-padding: clamp(1.5rem, 4vw, 3rem);
-  --gap-xs: 0.25rem;
-  --gap-sm: 0.5rem;
-  --gap-md: 1rem;
-  --gap-lg: 2rem;
-  --gap-xl: 4rem;
-
-  /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
-
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 300ms ease;
-  --transition-slow: 600ms ease;
-
-  /* Z-index */
-  --z-canvas: 1;
-  --z-content: 10;
-  --z-header: 50;
-  --z-ui: 100;
-  --z-transition: 5000;
-  --z-cursor: 9999;
+  --font-serif: 'DM Serif Display', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 }
 
-/* --- Light Theme Override (Resume page) --- */
-[data-theme="light"] {
-  --color-bg: #FAFAFA;
-  --color-text: #111111;
-  --color-text-muted: #555555;
-  --color-surface: #FFFFFF;
-  --color-surface-hover: #F5F5F5;
-  --color-border: rgba(0, 0, 0, 0.08);
-}
+@layer base {
+  :root {
+    background-color: var(--color-void);
+    color: var(--color-rice);
+  }
 
-[data-theme="light"] body,
-[data-theme="light"] button,
-[data-theme="light"] a {
-  cursor: auto;
-}
-
-/* --- Warm Theme — Thủy Mặc (Ink Wash) --- */
-[data-theme="warm"] {
-  --color-primary: #ed6f5c;
-  --color-neon: #e9b94a;
-  --color-bg: #efe7d2;
-  --color-text: #15140f;
-  --color-text-muted: #5a5448;
-  --color-surface: #ece4cf;
-  --color-surface-hover: #e5dcc5;
-  --color-border: rgba(21, 20, 15, 0.12);
-  --header-bg: rgba(239, 231, 210, 0.88);
-}
-
-/* Thủy Mặc ink wash texture for warm theme */
-[data-theme="warm"] body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9990;
-  background-image: url("/textures/black-white-grunge-background.png");
-  background-size: cover;
-  background-position: center;
-  mix-blend-mode: multiply;
-  opacity: 0.15;
-}
-
-/* Warm theme text selection */
-[data-theme="warm"] ::selection {
-  background-color: #ed6f5c;
-  color: #efe7d2;
-}
-
-/* --- Reset & Base --- */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: var(--font-body);
-  font-size: var(--font-size-body);
-  line-height: var(--line-height-body);
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  overflow-x: hidden;
-  cursor: none; /* Hide default cursor — custom cursor takes over */
-}
-
-/* Restore default cursor when reduced motion is preferred */
-@media (prefers-reduced-motion: reduce) {
   body {
-    cursor: auto;
+    background-color: var(--color-void);
+    color: var(--color-rice);
+    font-family: var(--font-mono);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none; /* Hide default cursor for custom ink cursor */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-}
 
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--color-accent-1);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  letter-spacing: var(--letter-spacing-heading);
-  line-height: var(--line-height-heading);
-}
-
-img, video {
-  max-width: 100%;
-  display: block;
-}
-
-button {
-  font-family: inherit;
-  cursor: none;
-  border: none;
-  background: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  button {
-    cursor: pointer;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-style: italic;
   }
-}
 
-input, textarea {
-  font-family: var(--font-body);
-  font-size: var(--font-size-body);
-}
-
-::selection {
-  background-color: var(--color-primary);
-  color: var(--color-text);
-}
-
-/* --- Canvas Layer --- */
-.canvas-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: var(--z-canvas);
-  pointer-events: auto;
-}
-
-/* --- Content Layer --- */
-.content-layer {
-  position: relative;
-  z-index: var(--z-content);
-  pointer-events: none;
-}
-
-.content-layer > * {
-  pointer-events: auto;
-}
-
-/* --- Section Base --- */
-.section {
-  min-height: 100vh;
-  padding: var(--section-padding) var(--content-padding);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-}
-
-/* --- Utility Classes --- */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* --- Transition Animations --- */
-@keyframes fadeInSections {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  /* Lenis smooth scroll recommended styles */
+  html.lenis, html.lenis body {
+    height: auto;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  .lenis.lenis-smooth iframe {
+    pointer-events: none;
+  }
+
+  /* Reduce motion fallback */
+  @media (prefers-reduced-motion: reduce) {
+    body {
+      cursor: auto;
+    }
+  }
+
+  ::selection {
+    background-color: var(--color-rust);
+    color: var(--color-rice);
+  }
+  
+  /* Utilities */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

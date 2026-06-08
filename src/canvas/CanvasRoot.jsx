@@ -1,32 +1,35 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
-import SceneManager from './SceneManager'
+import HeroScene from './hero/HeroScene'
 import PostProcessing from './effects/PostProcessing'
 import AdaptiveQuality from './effects/AdaptiveQuality'
-import EnvironmentSetup from './environment/Environment'
-import Lighting from './environment/Lighting'
-import { CAMERA } from '../utils/constants'
-import useThemeStore from '../stores/useThemeStore'
 
 export default function CanvasRoot() {
-  const theme = useThemeStore((s) => s.theme)
-  const bg = theme === 'warm' ? '#efe7d2' : '#0A0A0A'
-
   return (
-    <Canvas
-      camera={{ position: CAMERA.hero.position, fov: 45 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
-      style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 'var(--z-canvas, 1)', background: bg }}
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }}
     >
-      <Suspense fallback={null}>
-        <AdaptiveQuality />
-        <Lighting />
-        <EnvironmentSetup />
-        <SceneManager />
-        <PostProcessing />
-      </Suspense>
-    </Canvas>
+      <Canvas
+        camera={{ position: [0, 0, 8], fov: 45 }}
+        dpr={[1, 2]}
+        gl={{ antialias: true, powerPreference: "high-performance", alpha: false }}
+        style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
+      >
+        <color attach="background" args={['#0A0A0A']} />
+        <Suspense fallback={null}>
+          <AdaptiveQuality />
+          <HeroScene />
+          <PostProcessing />
+        </Suspense>
+      </Canvas>
+    </div>
   )
 }
-

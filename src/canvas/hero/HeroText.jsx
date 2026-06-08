@@ -1,89 +1,65 @@
-/**
- * HeroText.jsx — Name + Tagline overlay
- * HTML overlay with parallax effect + GSAP text reveal
- */
-
-import { useRef, useEffect } from 'react'
-import { Html } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import useSceneStore from '../../stores/useSceneStore'
+
+gsap.registerPlugin(useGSAP)
 
 export default function HeroText() {
-  const groupRef = useRef()
-  const nameRef = useRef()
-  const taglineRef = useRef()
+  const containerRef = useRef(null)
+  const { currentScene } = useSceneStore()
 
-  // Parallax: subtle movement based on mouse
-  useFrame((state) => {
-    if (!groupRef.current) return
-    const { pointer } = state
-    groupRef.current.position.x = pointer.x * 0.3
-    groupRef.current.position.y = pointer.y * 0.15
-  })
+  useGSAP(() => {
+    if (currentScene !== 'hero') return
 
-  // Text reveal animation
-  useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.3 })
+    // Subtle fade in and float up entrance
+    gsap.fromTo(containerRef.current.children,
+      { y: 40, opacity: 0, filter: 'blur(10px)' },
+      {
+        y: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 1.5,
+        stagger: 0.3,
+        ease: 'power3.out',
+        delay: 0.5
+      }
+    )
 
-    if (nameRef.current) {
-      tl.fromTo(
-        nameRef.current,
-        { opacity: 0, y: 30, filter: 'blur(10px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1, ease: 'power3.out' }
-      )
+    // Subtle mouse parallax for the text
+    const handleMouseMove = (e) => {
+      const { innerWidth, innerHeight } = window
+      const x = (e.clientX / innerWidth - 0.5) * 20
+      const y = (e.clientY / innerHeight - 0.5) * 20
+
+      gsap.to(containerRef.current, {
+        x,
+        y,
+        duration: 2,
+        ease: 'power2.out',
+        overwrite: 'auto'
+      })
     }
 
-    if (taglineRef.current) {
-      tl.fromTo(
-        taglineRef.current,
-        { opacity: 0, y: 20, filter: 'blur(8px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, ease: 'power3.out' },
-        `-=${0.6}`
-      )
-    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
 
-    return () => tl.kill()
-  }, [])
+  }, { dependencies: [currentScene], scope: containerRef })
+
+  if (currentScene === 'loading') return null
 
   return (
-    <group ref={groupRef}>
-      <Html
-        center
-        position={[0, 2.5, 0]}
-        style={{ pointerEvents: 'none', width: '100vw', textAlign: 'center' }}
-        zIndexRange={[50, 0]}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-          <h1
-            ref={nameRef}
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(2.5rem, 7vw, 5.5rem)',
-              fontWeight: 700,
-              color: '#E8E8E8',
-              letterSpacing: '-0.025em',
-              lineHeight: 1.05,
-              margin: 0,
-              opacity: 0,
-            }}
-          >
-            Gia Huy<span style={{ color: '#E54B2D' }}>.</span>
-          </h1>
-          <p
-            ref={taglineRef}
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 'clamp(0.9rem, 1.5vw, 1.2rem)',
-              color: '#6B6B6B',
-              margin: 0,
-              opacity: 0,
-              letterSpacing: '0.05em',
-            }}
-          >
-            Backend Engineer · Building Scalable Systems
-          </p>
-        </div>
-      </Html>
-    </group>
+    <div
+      className="fixed top-0 left-0 w-full h-full z-10 pointer-events-none flex flex-col items-center justify-center"
+    >
+      <div ref={containerRef} className="flex flex-col items-center">
+        <h1 className="font-serif italic text-[clamp(4rem,10vw,9rem)] leading-[0.9] text-primary select-none opacity-0">
+          Gia Huy
+        </h1>
+        <p className="font-mono font-normal text-sm md:text-lg text-[#D4CFC4] mt-6 tracking-[0.2em] uppercase select-none opacity-0">
+          Backend Developer
+        </p>
+      </div>
+    </div>
   )
 }

@@ -1,50 +1,24 @@
-import { useEffect } from 'react';
-import useSceneStore from '@stores/useSceneStore';
-import AboutSection from './AboutSection';
-import SkillsSection from './SkillsSection';
-import ProjectsSection from './ProjectsSection';
-import ExperienceSection from './ExperienceSection';
-import ContactSection from './ContactSection';
-import Footer from '../layout/Footer';
+import useSceneStore from '@stores/useSceneStore'
+import ScrollContainer from './ScrollContainer'
+import AboutSection from './AboutSection'
+import SkillsSection from './SkillsSection'
+import ProjectsSection from './ProjectsSection'
+import ExperienceSection from './ExperienceSection'
+import ContactSection from './ContactSection'
+import Footer from '../layout/Footer'
 
 export default function PageWrapper() {
-  const currentScene = useSceneStore((s) => s.currentScene);
-  const isTransitioning = useSceneStore((s) => s.isTransitioning);
+  const currentScene = useSceneStore((s) => s.currentScene)
 
-  const isVisible = currentScene === 'workspace' && !isTransitioning;
-
-  // Reset scroll when workspace appears
-  useEffect(() => {
-    if (isVisible) {
-      window.scrollTo(0, 0);
-    }
-  }, [isVisible]);
-
-  if (!isVisible) return null;
+  if (currentScene === 'loading') return null
 
   return (
-    <div 
-      className="page-wrapper"
-      style={{
-        position: 'relative',
-        zIndex: 10,
-        pointerEvents: 'auto',
-        animation: 'fadeInSections 0.6s ease 0.2s both',
-      }}
-    >
-      {/* Spacer — lets user see the 3D workspace first, then scroll into content */}
-      <div style={{ height: '100vh', pointerEvents: 'none' }} />
+    <ScrollContainer>
+      {/* Spacer lets user see the 3D hero scene first (100vh) */}
+      <div className="h-screen w-full pointer-events-none" />
       
-      {/* Content sections with solid background to cover the 3D scene */}
-      <div 
-        style={{
-          background: 'var(--color-bg)',
-          position: 'relative',
-          paddingTop: 'var(--gap-xl)',
-          paddingBottom: 'var(--gap-xl)',
-          boxShadow: '0 -40px 80px rgba(0,0,0,0.7)'
-        }}
-      >
+      {/* Content sections with solid background to cover the 3D scene when scrolling down */}
+      <div className="relative z-10 bg-void w-full pb-20 shadow-[0_-100px_100px_rgba(10,10,10,1)]">
         <AboutSection />
         <SkillsSection />
         <ProjectsSection />
@@ -52,6 +26,6 @@ export default function PageWrapper() {
         <ContactSection />
         <Footer />
       </div>
-    </div>
-  );
+    </ScrollContainer>
+  )
 }

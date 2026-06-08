@@ -1,11 +1,5 @@
-/**
- * Header.jsx — Floating glassmorphism navbar
- * Only visible when currentScene === 'workspace'
- * Smooth scroll to sections, Resume link navigates to /resume
- */
-
-import { useRef, useEffect, useState } from 'react'
-import gsap from 'gsap'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import useSceneStore from '@stores/useSceneStore'
 
 const NAV_ITEMS = [
@@ -18,117 +12,68 @@ const NAV_ITEMS = [
 ]
 
 export default function Header() {
-  const headerRef = useRef(null)
   const currentScene = useSceneStore((s) => s.currentScene)
-  const [visible, setVisible] = useState(false)
+  const { scrollY } = useScroll()
+  const [hidden, setHidden] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const lastYRef = useRef(0)
 
   useEffect(() => {
-    if (currentScene === 'workspace' && !visible) {
-      setVisible(true)
-      if (headerRef.current) {
-        gsap.fromTo(headerRef.current,
-          { y: -60, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.8 }
-        )
-      }
-    } else if (currentScene !== 'workspace' && visible) {
-      if (headerRef.current) {
-        gsap.to(headerRef.current, {
-          y: -60, opacity: 0, duration: 0.3, ease: 'power2.in',
-          onComplete: () => setVisible(false),
-        })
-      }
+    if (currentScene !== 'loading') {
+      // Delay showing the header so it doesn't pop in immediately before the hero animation
+      const timer = setTimeout(() => setMounted(true), 1500)
+      return () => clearTimeout(timer)
     }
-  }, [currentScene, visible])
+  }, [currentScene])
 
-  const handleClick = (e, item) => {
-    if (item.href === '/resume') {
-      // Navigate to resume page
-      window.open('/resume', '_blank')
-      e.preventDefault()
-      return
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = lastYRef.current
+    if (latest > previous && latest > 150) {
+      setHidden(true)
+    } else {
+      setHidden(false)
     }
+    lastYRef.current = latest
+  })
 
-    e.preventDefault()
-    const el = document.querySelector(item.href)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }
-
-  const handleBack = () => {
-    useSceneStore.getState().startTransition()
-    window.dispatchEvent(new CustomEvent('workspace-to-hero'))
-  }
-
-  if (!visible && currentScene !== 'workspace') return null
+  if (currentScene === 'loading' || !mounted) return null
 
   return (
-    <header
-      ref={headerRef}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 'var(--z-header)',
-        background: 'var(--header-bg, rgba(10, 10, 10, 0.85))',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--color-border)',
-        padding: '0 var(--content-padding)',
-        opacity: 0,
+    <motion.header
+      variants={{
+        visible: { y: 0, opacity: 1 },
+        hidden: { y: '-150%', opacity: 0 }
       }}
+      initial="hidden"
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.6 }} // Custom cubic-bezier for fluid feel
+      className="fixed top-6 left-0 right-0 z-[50] mx-auto w-max"
     >
-      <div
-        style={{
-          maxWidth: 'var(--content-max-width)',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '56px',
-        }}
-      >
-        {/* Logo / Name */}
+      <div className="flex items-center gap-6 px-6 py-3 rounded-full bg-surface/20 backdrop-blur-xl border border-white/5 shadow-[0_20px_40px_rgba(0,0,0,0.3)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+        
+        {/* Logo Monogram */}
         <button
-          onClick={handleBack}
-          style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '1.1rem',
-            fontWeight: 700,
-            color: 'var(--color-text)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            letterSpacing: 'var(--letter-spacing-heading)',
-          }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="font-serif italic text-xl font-medium text-primary hover:text-rust transition-colors duration-300 pointer-events-auto"
         >
-          Gia Huy<span style={{ color: 'var(--color-primary)' }}>.</span>
+          GH.
         </button>
 
-        {/* Nav links */}
-        <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        {/* Nav Links */}
+        <nav className="flex items-center gap-5">
           {NAV_ITEMS.map((item) => (
             <a
               key={item.label}
               href={item.href}
-              onClick={(e) => handleClick(e, item)}
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'var(--font-size-small)',
-                color: 'var(--color-text-muted)',
-                textDecoration: 'none',
-                cursor: 'pointer',
-                transition: 'color var(--transition-fast)',
-                letterSpacing: '0.02em',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-text)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--color-text-muted)'
+              className="font-mono text-xs text-muted hover:text-primary transition-colors duration-300 tracking-[0.05em] uppercase pointer-events-auto"
+              onClick={(e) => {
+                if (item.href === '/resume') return
+                e.preventDefault()
+                const el = document.querySelector(item.href)
+                if (el) {
+                  // Wait for Lenis smooth scroll or native smooth scroll
+                  el.scrollIntoView({ behavior: 'smooth' })
+                }
               }}
             >
               {item.label}
@@ -136,6 +81,6 @@ export default function Header() {
           ))}
         </nav>
       </div>
-    </header>
+    </motion.header>
   )
 }
