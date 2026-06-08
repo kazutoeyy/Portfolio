@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
+import { Selection } from '@react-three/postprocessing'
 import HeroScene from './hero/HeroScene'
 import PostProcessing from './effects/PostProcessing'
 import AdaptiveQuality from './effects/AdaptiveQuality'
@@ -24,11 +25,13 @@ export default function CanvasRoot() {
         style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
       >
         <color attach="background" args={['#0A0A0A']} />
-        <Suspense fallback={null}>
-          <AdaptiveQuality />
-          <HeroScene />
-          <PostProcessing />
-        </Suspense>
+        <Selection>
+          <Suspense fallback={null}>
+            <AdaptiveQuality />
+            <HeroScene />
+            <PostProcessing />
+          </Suspense>
+        </Selection>
       </Canvas>
     </div>
   )

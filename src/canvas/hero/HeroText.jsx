@@ -14,23 +14,21 @@ export default function HeroText() {
 
     // Subtle fade in and float up entrance
     gsap.fromTo(containerRef.current.children,
-      { y: 40, opacity: 0, filter: 'blur(10px)' },
+      { y: 8, opacity: 0 },
       {
         y: 0,
         opacity: 1,
-        filter: 'blur(0px)',
-        duration: 1.5,
-        stagger: 0.3,
-        ease: 'power3.out',
-        delay: 0.5
+        duration: 0.6,
+        ease: 'power2.out',
+        delay: 0
       }
     )
 
     // Subtle mouse parallax for the text
     const handleMouseMove = (e) => {
       const { innerWidth, innerHeight } = window
-      const x = (e.clientX / innerWidth - 0.5) * 20
-      const y = (e.clientY / innerHeight - 0.5) * 20
+      const x = (e.clientX - innerWidth / 2) * 0.015
+      const y = (e.clientY - innerHeight / 2) * 0.015
 
       gsap.to(containerRef.current, {
         x,

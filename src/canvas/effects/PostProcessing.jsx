@@ -5,10 +5,9 @@
 
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { EffectComposer, Vignette, ChromaticAberration } from '@react-three/postprocessing'
+import { EffectComposer, Vignette, ChromaticAberration, SelectiveBloom } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import { Vector2 } from 'three'
-import SelectiveBloom from './SelectiveBloom'
 import RadialBlurEffect from './RadialBlurEffect'
 import useQualityStore from '../../stores/useQualityStore'
 import useSceneStore from '../../stores/useSceneStore'
@@ -58,7 +57,15 @@ export default function PostProcessing() {
 
   return (
     <EffectComposer disableNormalPass multisampling={0}>
-      {bloomEnabled && <SelectiveBloom />}
+      {bloomEnabled && (
+        <SelectiveBloom 
+          intensity={0.3} 
+          luminanceThreshold={0.6} 
+          luminanceSmoothing={0.9} 
+          radius={0.4} 
+          mipmapBlur 
+        />
+      )}
       
       {!prefersReducedMotion && (
         <>
