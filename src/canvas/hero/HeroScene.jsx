@@ -32,11 +32,8 @@ export default function HeroScene() {
     }
   })
 
-  // Do not render objects until loading is almost done to avoid popping
-  if (currentScene === 'loading') return null
-
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} visible={currentScene !== 'loading'}>
       <ambientLight intensity={0.15} color="#E8E0D0" />
       <directionalLight position={[5, 5, -5]} intensity={2.5} color="#8B3A2A" />
       <directionalLight position={[-5, -2, 5]} intensity={0.8} color="#4A453E" />

@@ -22,7 +22,7 @@ export default function CanvasRoot() {
         camera={{ position: [0, 0, 8], fov: 45 }}
         dpr={[1, 2]}
         gl={{ antialias: true, powerPreference: "high-performance", alpha: false }}
-        style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
+        style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}
       >
         <color attach="background" args={['#0A0A0A']} />
         <Selection>

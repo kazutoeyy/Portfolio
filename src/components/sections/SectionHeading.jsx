@@ -2,10 +2,11 @@ import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 
-export default function SectionHeading({ number, title }) {
+export default function SectionHeading({ number, title, disableAnimation = false }) {
   const headingRef = useRef(null)
   
   useGSAP(() => {
+    if (disableAnimation) return;
     // Breathing reveal: letter spacing tight to normal, opacity fade in
     gsap.fromTo(headingRef.current,
       { letterSpacing: '-0.03em', opacity: 0, y: 20 },
@@ -21,7 +22,7 @@ export default function SectionHeading({ number, title }) {
         }
       }
     )
-  }, { scope: headingRef })
+  }, { scope: headingRef, dependencies: [disableAnimation] })
 
   return (
     <div className="relative mb-16 md:mb-24 flex items-center">
@@ -33,7 +34,7 @@ export default function SectionHeading({ number, title }) {
       {/* Main Title */}
       <h2 
         ref={headingRef}
-        className="font-serif italic text-4xl md:text-6xl text-primary pr-8"
+        className="section-title-text font-serif italic text-4xl md:text-6xl text-primary pr-8"
       >
         {title}
       </h2>
