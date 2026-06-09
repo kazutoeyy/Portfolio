@@ -2,94 +2,172 @@ import { useRef, useEffect, useMemo, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
+import { Select } from '@react-three/postprocessing'
 
 export default function ThreadIto({ position }) {
-  const meshRef = useRef(null)
-  const pointLightRef = useRef(null)
+  const groupRef = useRef(null)
+  const meshesRef = useRef([])
   const [hovered, setHovered] = useState(false)
 
-  // Generate a smooth curve for the thread
-  const curve = useMemo(() => {
-    const points = []
-    for (let i = 0; i <= 20; i++) {
-      const t = i / 20
-      points.push(new THREE.Vector3(
-        Math.sin(t * Math.PI * 2) * 1.5,
-        (t - 0.5) * 4,
-        Math.cos(t * Math.PI * 3) * 1.5
-      ))
-    }
-    return new THREE.CatmullRomCurve3(points)
+  // Generate 7 organic curves
+  const curves = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const seed = i * 1.618
+      const points = Array.from({ length: 6 }, (_, j) => {
+        const t = j / 5
+        return new THREE.Vector3(
+          Math.sin(seed + t * Math.PI * 2.3) * 1.2 + Math.cos(seed * 2 + t) * 0.6,
+          (t - 0.5) * 3.5 + Math.sin(seed * 3 + t * 2) * 0.4,
+          Math.cos(seed + t * Math.PI * 1.7) * 0.8
+        )
+      })
+      return new THREE.CatmullRomCurve3(points)
+    })
   }, [])
 
-  const endPoint = useMemo(() => curve.getPoint(1), [curve])
+  const endPointZero = useMemo(() => curves[0].getPoint(1), [curves])
 
+  const positionRef = useRef(position)
+  
+  const floatOffsetRef = useRef(0)
+  
   useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.material.transparent = true
-      meshRef.current.material.opacity = 0
-
-      gsap.fromTo(meshRef.current.position,
-        { x: position[0] - 0.5 },
-        { x: position[0], duration: 0.8, ease: 'power2.out', delay: 1.2 }
-      )
-      gsap.fromTo(meshRef.current.scale,
-        { x: 0.85, y: 0.85, z: 0.85 },
-        { x: 1, y: 1, z: 1, duration: 0.8, ease: 'power2.out', delay: 1.2 }
-      )
-      gsap.to(meshRef.current.material, {
-        opacity: 0.6, duration: 0.8, ease: 'power2.out', delay: 1.2
+    const rafId = requestAnimationFrame(() => {
+      if (!groupRef.current) return
+      
+      // Set initial state
+      meshesRef.current.forEach(mesh => {
+        if (mesh?.material) {
+          mesh.material.opacity = 0
+        }
       })
-    }
-  }, [position])
+      
+      // Emerge group position
+      gsap.fromTo(
+        groupRef.current.position,
+        { x: positionRef.current[0] - 0.5 },
+        { x: positionRef.current[0], duration: 0.8, ease: 'power2.out', delay: 1.2 }
+      )
+      
+      // Emerge opacity — delay đảm bảo refs ready
+      meshesRef.current.forEach(mesh => {
+        if (mesh?.material) {
+          gsap.to(mesh.material, {
+            opacity: 0.6,
+            duration: 0.8,
+            ease: 'power2.out',
+            delay: 1.2
+          })
+        }
+      })
+    })
+    
+    return () => cancelAnimationFrame(rafId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.2
-      meshRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
-      
-      if (meshRef.current.material) {
-        const maxOpacity = hovered ? 0.85 : 0.7
-        if (meshRef.current.material.opacity > maxOpacity) {
-          meshRef.current.material.opacity = maxOpacity
-        }
-      }
+    const elapsedTime = state.clock.elapsedTime
+    
+    // Idle animation for group
+    floatOffsetRef.current = Math.sin(elapsedTime * 0.4) * 0.08
+    if (groupRef.current) {
+      groupRef.current.position.y = positionRef.current[1] + floatOffsetRef.current
     }
+
+    // Idle animation for individual meshes
+    meshesRef.current.forEach((mesh, index) => {
+      if (mesh) {
+        mesh.rotation.y = elapsedTime * (0.08 + index * 0.02)
+        mesh.rotation.x = Math.sin(elapsedTime * 0.3 + index) * 0.05
+      }
+    })
   })
 
   const handlePointerOver = () => {
     setHovered(true)
-    gsap.to(meshRef.current.material, { opacity: 0.85, duration: 0.3, overwrite: 'auto' })
+    meshesRef.current.forEach(mesh => {
+      if (mesh && mesh.material) {
+        gsap.to(mesh.material, { 
+          emissiveIntensity: 0.25,
+          duration: 0.3, 
+          overwrite: 'auto' 
+        })
+      }
+    })
   }
+  
   const handlePointerOut = () => {
     setHovered(false)
-    gsap.to(meshRef.current.material, { opacity: 0.6, duration: 0.3, overwrite: 'auto' })
+    meshesRef.current.forEach((mesh, index) => {
+      if (mesh && mesh.material) {
+        gsap.to(mesh.material, { 
+          emissiveIntensity: index === 0 ? 0.15 : 0.1,
+          duration: 0.3, 
+          overwrite: 'auto' 
+        })
+      }
+    })
   }
 
   return (
-    <mesh 
-      ref={meshRef} 
+    <group 
+      ref={groupRef} 
       position={position}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
     >
-      <tubeGeometry args={[curve, 64, 0.05, 8, false]} />
-      <meshStandardMaterial 
-        color="#C0392B"
-        roughness={0.4}
-        metalness={0.2}
-        emissive="#8B3A2A"
-        emissiveIntensity={0.2}
-        transparent={true}
-      />
-      <pointLight 
-        ref={pointLightRef}
-        position={endPoint} 
-        color="#8B3A2A" 
-        intensity={0.4} 
-        distance={1.5} 
-        decay={2} 
-      />
-    </mesh>
+      {curves.map((curve, index) => {
+        const isFirst = index === 0
+        const radius = 0.018 + (index * 0.004)
+        
+        if (isFirst) {
+          return (
+            <Select enabled key="tube-0">
+              <mesh
+                key="tube-0-mesh"
+                ref={el => meshesRef.current[index] = el}
+              >
+                <tubeGeometry args={[curve, 32, radius, 4, false]} />
+                <meshStandardMaterial 
+                  color="#3A1A12"
+                  roughness={0.95}
+                  metalness={0}
+                  emissive="#8B3A2A"
+                  emissiveIntensity={0.15}
+                  transparent={true}
+                  opacity={0}
+                />
+                <pointLight 
+                  position={endPointZero} 
+                  color="#8B3A2A" 
+                  intensity={0.3} 
+                  distance={1.5} 
+                  decay={2} 
+                />
+              </mesh>
+            </Select>
+          )
+        }
+        
+        return (
+          <mesh 
+            key={`tube-${index}`}
+            ref={el => meshesRef.current[index] = el}
+          >
+            <tubeGeometry args={[curve, 32, radius, 4, false]} />
+            <meshStandardMaterial 
+              color="#3A1A12"
+              roughness={0.95}
+              metalness={0}
+              emissive="#1A0A08"
+              emissiveIntensity={0.1}
+              transparent={true}
+              opacity={0}
+            />
+          </mesh>
+        )
+      })}
+    </group>
   )
 }
