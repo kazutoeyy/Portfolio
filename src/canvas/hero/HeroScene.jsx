@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import useSceneStore from '@stores/useSceneStore'
 import ThreadIto from './objects/ThreadIto'
-import InkBlobSumi from './objects/InkBlobSumi'
+import ScrollPaper from './objects/ScrollPaper'
 import OrigamiOri from './objects/OrigamiOri'
 
 function ParallaxController({ groupRef }) {
@@ -46,7 +46,7 @@ export default function HeroScene() {
       <spotLight position={[0, 10, 0]} intensity={1} color="#E8E0D0" penumbra={1} angle={0.5} />
       
       <ThreadIto position={threadPos} />
-      <InkBlobSumi position={inkPos} />
+      <ScrollPaper position={inkPos} />
       <OrigamiOri position={origamiPos} />
     </group>
   )
