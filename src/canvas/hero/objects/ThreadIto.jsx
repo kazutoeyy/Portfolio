@@ -18,7 +18,7 @@ export default function ThreadIto({ position }) {
         return new THREE.Vector3(
           Math.sin(seed + t * Math.PI * 2.3) * 1.2 + Math.cos(seed * 2 + t) * 0.6,
           (t - 0.5) * 3.5 + Math.sin(seed * 3 + t * 2) * 0.4,
-          Math.cos(seed + t * Math.PI * 1.7) * 0.8
+          Math.cos(seed + t * Math.PI * 1.7) * 1.8 + Math.sin(seed * 2 + t * 2.1) * 0.9
         )
       })
       return new THREE.CatmullRomCurve3(points)
@@ -128,12 +128,12 @@ export default function ThreadIto({ position }) {
                 key="tube-0-mesh"
                 ref={el => meshesRef.current[index] = el}
               >
-                <tubeGeometry args={[curve, 32, radius, 4, false]} />
+                <tubeGeometry args={[curve, 32, radius, 8, false]} />
                 <meshStandardMaterial 
-                  color="#3A1A12"
+                  color="#7A2E1A"
                   roughness={0.95}
                   metalness={0}
-                  emissive="#8B3A2A"
+                  emissive="#C0392B"
                   emissiveIntensity={0.15}
                   transparent={true}
                   opacity={0}
@@ -155,12 +155,12 @@ export default function ThreadIto({ position }) {
             key={`tube-${index}`}
             ref={el => meshesRef.current[index] = el}
           >
-            <tubeGeometry args={[curve, 32, radius, 4, false]} />
+            <tubeGeometry args={[curve, 32, radius, 8, false]} />
             <meshStandardMaterial 
-              color="#3A1A12"
+              color="#7A2E1A"
               roughness={0.95}
               metalness={0}
-              emissive="#1A0A08"
+              emissive="#3A1A0A"
               emissiveIntensity={0.1}
               transparent={true}
               opacity={0}
