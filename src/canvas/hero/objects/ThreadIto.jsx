@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
@@ -8,7 +8,7 @@ import useScrollStore from '@stores/useScrollStore'
 export default function ThreadIto({ position }) {
   const groupRef = useRef(null)
   const meshesRef = useRef([])
-  const [hovered, setHovered] = useState(false)
+  const hoveredRef = useRef(false)
   const emergeCompleteRef = useRef(false)
   const scrollRef = useRef(0)
 
@@ -52,23 +52,24 @@ export default function ThreadIto({ position }) {
         { x: positionRef.current[0], duration: 0.8, ease: 'power2.out', delay: 1.2 }
       )
       
-      // Emerge opacity — delay đảm bảo refs ready
-      let completedCount = 0
-      const totalMeshes = meshesRef.current.filter(m => m?.material).length
+      // Emerge opacity
       meshesRef.current.forEach(mesh => {
         if (mesh?.material) {
           gsap.to(mesh.material, {
             opacity: 0.6,
             duration: 0.8,
             ease: 'power2.out',
-            delay: 1.2,
-            onComplete: () => {
-              completedCount++
-              if (completedCount >= totalMeshes) {
-                setTimeout(() => { emergeCompleteRef.current = true }, 100)
-              }
-            }
+            delay: 1.2
           })
+        }
+      })
+      
+      // Set emerge complete after known timing — không count refs
+      gsap.to({}, {
+        duration: 0.1,
+        delay: 2.1,
+        onComplete: () => {
+          emergeCompleteRef.current = true
         }
       })
     })
@@ -134,9 +135,9 @@ export default function ThreadIto({ position }) {
   })
 
   const handlePointerOver = () => {
-    setHovered(true)
+    hoveredRef.current = true
     meshesRef.current.forEach(mesh => {
-      if (mesh && mesh.material) {
+      if (mesh?.material) {
         gsap.to(mesh.material, { 
           emissiveIntensity: 0.25,
           duration: 0.3, 
@@ -147,9 +148,9 @@ export default function ThreadIto({ position }) {
   }
   
   const handlePointerOut = () => {
-    setHovered(false)
+    hoveredRef.current = false
     meshesRef.current.forEach((mesh, index) => {
-      if (mesh && mesh.material) {
+      if (mesh?.material) {
         gsap.to(mesh.material, { 
           emissiveIntensity: index === 0 ? 0.15 : 0.1,
           duration: 0.3, 

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
@@ -9,7 +9,7 @@ export default function ScrollPaper({ position }) {
   const paperRef = useRef(null)
   const topCurlRef = useRef(null)
   const bottomCurlRef = useRef(null)
-  const [hovered, setHovered] = useState(false)
+  const hoveredRef = useRef(false)
   const positionRef = useRef(position)
   const emergeCompleteRef = useRef(false)
   const scrollRef = useRef(0)
@@ -51,9 +51,15 @@ export default function ScrollPaper({ position }) {
         opacity: 0.65,
         duration: 0.8,
         ease: 'power2.out',
-        delay: 1.8,
+        delay: 1.8
+      })
+
+      // Set emerge complete after known timing — không count refs
+      gsap.to({}, {
+        duration: 0.1,
+        delay: 2.7,
         onComplete: () => {
-          setTimeout(() => { emergeCompleteRef.current = true }, 100)
+          emergeCompleteRef.current = true
         }
       })
 
@@ -83,7 +89,7 @@ export default function ScrollPaper({ position }) {
       groupRef.current.rotation.x = Math.sin(t * 0.2) * 0.03
 
       if (paperRef.current?.material) {
-        const maxOp = hovered ? 0.85 : 0.7
+        const maxOp = hoveredRef.current ? 0.85 : 0.7
         if (paperRef.current.material.opacity > maxOp) {
           paperRef.current.material.opacity = maxOp
         }
@@ -117,7 +123,7 @@ export default function ScrollPaper({ position }) {
 
     if (paperRef.current?.material) {
       // Fix: hover thêm +0.2 nhưng cap tại 0.85, thay vì Math.min luôn trả targetPaperOp
-      const targetOp = hovered
+      const targetOp = hoveredRef.current
         ? Math.min(0.85, targetPaperOp + 0.2)
         : targetPaperOp
       paperRef.current.material.opacity +=
@@ -139,7 +145,7 @@ export default function ScrollPaper({ position }) {
       position={position}
       rotation={[0.1, -0.3, 0.05]}
       onPointerOver={() => {
-        setHovered(true)
+        hoveredRef.current = true
         if (paperRef.current?.material) {
           gsap.to(paperRef.current.material, {
             opacity: 0.85,
@@ -149,7 +155,7 @@ export default function ScrollPaper({ position }) {
         }
       }}
       onPointerOut={() => {
-        setHovered(false)
+        hoveredRef.current = false
         if (paperRef.current?.material) {
           gsap.to(paperRef.current.material, {
             opacity: 0.65,

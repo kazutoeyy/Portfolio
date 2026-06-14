@@ -39,12 +39,6 @@ export default function HeroScene() {
   return (
     <group ref={groupRef} visible={currentScene !== 'loading'}>
       <ParallaxController groupRef={groupRef} />
-      
-      <ambientLight intensity={0.15} color="#E8E0D0" />
-      <directionalLight position={[5, 5, -5]} intensity={0.8} color="#5A3028" />
-      <directionalLight position={[-5, -2, 5]} intensity={0.8} color="#4A453E" />
-      <spotLight position={[0, 10, 0]} intensity={1} color="#E8E0D0" penumbra={1} angle={0.5} />
-      
       <ThreadIto position={threadPos} />
       <ScrollPaper position={inkPos} />
       <OrigamiOri position={origamiPos} />

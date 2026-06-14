@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
@@ -7,7 +7,8 @@ import useScrollStore from '@stores/useScrollStore'
 export default function OrigamiOri({ position }) {
   const groupRef = useRef(null)
   const meshRef = useRef(null)
-  const [hovered, setHovered] = useState(false)
+  const hoveredRef = useRef(false)
+  const edgesRef = useRef(null)
   const emergeCompleteRef = useRef(false)
   const scrollRef = useRef(0)
 
@@ -55,6 +56,8 @@ export default function OrigamiOri({ position }) {
     return geo
   }, [])
 
+  const edgesGeo = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry])
+
   useEffect(() => {
     const rafId = requestAnimationFrame(() => {
       if (!groupRef.current || !meshRef.current) return
@@ -64,9 +67,15 @@ export default function OrigamiOri({ position }) {
         { z: 0, duration: 0.9, ease: 'power2.out', delay: 2.4 }
       )
       gsap.to(meshRef.current.material, {
-        opacity: 0.6, duration: 0.9, ease: 'power2.out', delay: 2.4,
+        opacity: 0.6, duration: 0.9, ease: 'power2.out', delay: 2.4
+      })
+
+      // Set emerge complete after known timing — không count refs
+      gsap.to({}, {
+        duration: 0.1,
+        delay: 3.4,
         onComplete: () => {
-          setTimeout(() => { emergeCompleteRef.current = true }, 100)
+          emergeCompleteRef.current = true
         }
       })
     })
@@ -140,19 +149,22 @@ export default function OrigamiOri({ position }) {
       meshRef.current.material.opacity +=
         (targetOpacity - meshRef.current.material.opacity) * 0.05
     }
+
+    // Edges opacity lerp for hover
+    if (edgesRef.current?.material) {
+      const targetOp = hoveredRef.current ? 0.3 : 0
+      edgesRef.current.material.opacity +=
+        (targetOp - edgesRef.current.material.opacity) * 0.1
+    }
   })
 
   return (
     <group ref={groupRef} position={position}>
-      {/* Lighting cho origami để đảm bảo mỗi face có tone riêng */}
-      <directionalLight position={[2, 3, 1]} intensity={0.8} color="#E8E2D9" />
-      <directionalLight position={[-1, -1, 2]} intensity={0.3} color="#8B3A2A" />
-      
       <mesh 
         ref={meshRef}
         geometry={geometry}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => hoveredRef.current = true}
+        onPointerOut={() => hoveredRef.current = false}
       >
         <meshStandardMaterial
           color="#D4CFC4"
@@ -162,12 +174,10 @@ export default function OrigamiOri({ position }) {
           transparent={true}
           opacity={0}
         />
-        {hovered && (
-          <lineSegments>
-            <edgesGeometry args={[geometry]} />
-            <lineBasicMaterial color="#8B3A2A" transparent opacity={0.3} />
-          </lineSegments>
-        )}
+        <lineSegments ref={edgesRef}>
+          <primitive object={edgesGeo} attach="geometry" />
+          <lineBasicMaterial color="#8B3A2A" transparent opacity={0} />
+        </lineSegments>
       </mesh>
     </group>
   )

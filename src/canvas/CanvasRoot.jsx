@@ -25,6 +25,13 @@ export default function CanvasRoot() {
         style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}
       >
         <color attach="background" args={['#0A0A0A']} />
+        
+        {/* Lights ở root level — SelectiveBloom cần detect được */}
+        <ambientLight intensity={0.15} color="#E8E0D0" />
+        <directionalLight position={[5, 5, -5]} intensity={0.8} color="#5A3028" />
+        <directionalLight position={[-5, -2, 5]} intensity={0.8} color="#4A453E" />
+        <spotLight position={[0, 10, 0]} intensity={1} color="#E8E0D0" penumbra={1} angle={0.5} />
+        
         <Selection>
           <Suspense fallback={null}>
             <AdaptiveQuality />
