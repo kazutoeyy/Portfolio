@@ -3,11 +3,14 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
 import { Select } from '@react-three/postprocessing'
+import useScrollStore from '@stores/useScrollStore'
 
 export default function ThreadIto({ position }) {
   const groupRef = useRef(null)
   const meshesRef = useRef([])
   const [hovered, setHovered] = useState(false)
+  const emergeCompleteRef = useRef(false)
+  const scrollRef = useRef(0)
 
   // Generate 7 organic curves
   const curves = useMemo(() => {
@@ -50,13 +53,21 @@ export default function ThreadIto({ position }) {
       )
       
       // Emerge opacity — delay đảm bảo refs ready
+      let completedCount = 0
+      const totalMeshes = meshesRef.current.filter(m => m?.material).length
       meshesRef.current.forEach(mesh => {
         if (mesh?.material) {
           gsap.to(mesh.material, {
             opacity: 0.6,
             duration: 0.8,
             ease: 'power2.out',
-            delay: 1.2
+            delay: 1.2,
+            onComplete: () => {
+              completedCount++
+              if (completedCount >= totalMeshes) {
+                setTimeout(() => { emergeCompleteRef.current = true }, 100)
+              }
+            }
           })
         }
       })
@@ -67,19 +78,57 @@ export default function ThreadIto({ position }) {
   }, [])
 
   useFrame((state) => {
+    if (!groupRef.current) return
     const elapsedTime = state.clock.elapsedTime
     
-    // Idle animation for group
-    floatOffsetRef.current = Math.sin(elapsedTime * 0.4) * 0.08
-    if (groupRef.current) {
+    // Pre-emerge: idle only
+    if (!emergeCompleteRef.current) {
+      floatOffsetRef.current = Math.sin(elapsedTime * 0.4) * 0.08
       groupRef.current.position.y = positionRef.current[1] + floatOffsetRef.current
+      meshesRef.current.forEach((mesh, index) => {
+        if (mesh) {
+          mesh.rotation.y = elapsedTime * (0.08 + index * 0.02)
+          mesh.rotation.x = Math.sin(elapsedTime * 0.3 + index) * 0.05
+        }
+      })
+      return
     }
 
-    // Idle animation for individual meshes
+    // ── SCROLL DATA ──
+    const sp_raw = useScrollStore.getState().scrollProgress
+    scrollRef.current += (sp_raw - scrollRef.current) * 0.06
+    const s = scrollRef.current
+
+    // ── DRIFT POSITION ──
+    const driftX = s * 3.5
+    const driftY = s * -3.0
+    const driftZ = s * -2.0               // Lùi xa vào background
+
+    groupRef.current.position.x = positionRef.current[0] + driftX
+    groupRef.current.position.z = positionRef.current[2] + driftZ
+    // Y: idle float + drift gộp tại 1 điểm duy nhất
+    groupRef.current.position.y =
+      positionRef.current[1] + Math.sin(elapsedTime * 0.4) * 0.08 + driftY
+
+    // ── ROTATION — unravel + tilt ──
+    groupRef.current.rotation.y = s * Math.PI * 1.5
+    groupRef.current.rotation.x = s * 0.4
+
+    // Scale nhẹ — threads căng ra khi scroll
+    const scaleY = 1 + s * 0.3
+    groupRef.current.scale.set(1, scaleY, 1)
+
+    // Idle animation for individual meshes + scroll unravel
     meshesRef.current.forEach((mesh, index) => {
       if (mesh) {
-        mesh.rotation.y = elapsedTime * (0.08 + index * 0.02)
-        mesh.rotation.x = Math.sin(elapsedTime * 0.3 + index) * 0.05
+        mesh.rotation.y = elapsedTime * (0.08 + index * 0.02) + s * Math.PI * 1.5
+        mesh.rotation.x = Math.sin(elapsedTime * 0.3 + index) * 0.05 * (1 - s * 0.5)
+
+        // Opacity fade
+        if (mesh.material) {
+          const targetOpacity = Math.max(0.1, 0.6 - s * 0.4)
+          mesh.material.opacity += (targetOpacity - mesh.material.opacity) * 0.05
+        }
       }
     })
   })

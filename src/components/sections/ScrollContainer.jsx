@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import useScrollStore from '@stores/useScrollStore'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,8 +23,12 @@ export default function ScrollContainer({ children }) {
     
     lenisRef.current = lenis
 
-    // Sync GSAP ScrollTrigger with Lenis
-    lenis.on('scroll', ScrollTrigger.update)
+    // Sync GSAP ScrollTrigger with Lenis + feed scroll data to store
+    lenis.on('scroll', (e) => {
+      ScrollTrigger.update()
+      useScrollStore.getState().setScrollProgress(e.progress)
+      useScrollStore.getState().setScrollVelocity(Math.abs(e.velocity))
+    })
 
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000)
